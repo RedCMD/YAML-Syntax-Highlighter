@@ -14,6 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
+      - name: Install VSCE
+        run: npm i @vscode/vsce -g
+
       - name: Setup Github Actions
         run: |
           git config --global user.name "RedCMD"
