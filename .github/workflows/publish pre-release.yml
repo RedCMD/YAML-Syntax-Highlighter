@@ -1,0 +1,27 @@
+name: Publish Pre-release Extension
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '**.json'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Setup Github Actions
+        run: |
+          git config --global user.name "RedCMD"
+          git config --global user.email "theredcmd@gmail.com"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Sync Github Actions"
+
+      - name: Publish Pre-release
+        run: |
+          vsce publish patch --pre-release -p ${{ secrets.VSCE_PAT }}
+          git push

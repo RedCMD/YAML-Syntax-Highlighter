@@ -1,0 +1,10 @@
+.github/**
+.git/**
+.vscode/**
+.vscode-test/**
+_test/**
+
+.gitignore
+.vsixmanifest
+vsc-extension-quickstart.md
+Official_YAML_Logo.svg

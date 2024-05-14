@@ -1,0 +1,31 @@
+name: Publish Extension
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        default: 'minor x.1.0'
+        type: choice
+        options:
+          - patch x.x.1
+          - minor x.1.0
+          - major 1.0.0
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Setup Github Actions
+        run: |
+          git config --global user.name "RedCMD"
+          git config --global user.email "theredcmd@gmail.com"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "Sync Github Actions"
+
+      - name: Publish Release
+        run: |
+          vsce publish ${{ github.event.inputs.version }} -p ${{ secrets.VSCE_PAT }}
+          git push
