@@ -12,4 +12,5 @@
 
 - Known [Issues](https://github.com/RedCMD/YAML-Syntax-Highlighter/issues/1)
 - Original YAML [grammar](https://github.com/textmate/yaml.tmbundle)
+- Atom's YAML [grammar](https://github.com/atom/language-yaml)
 - Offical YAML [website](https://yaml.org/)
