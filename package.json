@@ -43,7 +43,6 @@
 					".yaml.erb",
 					".yml.erb",
 					".sls",
-					".stylelintrc",
 					".sublime-syntax",
 					".Boxfile",
 					".Kptfile",
