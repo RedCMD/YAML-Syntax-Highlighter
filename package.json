@@ -50,7 +50,7 @@
 					".Krmfile",
 					".ksy"
 				],
-				"firstLine": "^#cloud-config",
+				"firstLine": "^#cloud-config|^(%YAML([ \t]+[0-9]+\\.[0-9]+|:1\\.1)|\uFEFF+)([ \t]+#|[ \t]*$)|^---$",
 				"configuration": "./language-configuration.json"
 			},
 			{
