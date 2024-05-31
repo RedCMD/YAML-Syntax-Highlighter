@@ -62,7 +62,12 @@
 			{
 				"language": "yaml",
 				"scopeName": "source.yaml",
-				"path": "./syntaxes/yaml.tmLanguage.json"
+				"path": "./syntaxes/yaml.tmLanguage.json",
+				"unbalancedBracketScopes": [
+					"invalid.illegal",
+					"meta.scalar.yaml",
+					"storage.type.tag.shorthand.yaml"
+				]
 			},
 			{
 				"language": "dockercompose",

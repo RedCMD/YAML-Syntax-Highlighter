@@ -9,13 +9,13 @@
 	"brackets": [
 		["{", "}"],
 		["[", "]"],
-		["(", ")"]
+		["!<", ">"]
 	],
 	// symbols that are auto closed when typing
 	"autoClosingPairs": [
 		["{", "}"],
 		["[", "]"],
-		["(", ")"],
+		["!<", ">"],
 		["\"", "\""],
 		["'", "'"]
 	],
@@ -23,19 +23,23 @@
 	"surroundingPairs": [
 		["{", "}"],
 		["[", "]"],
-		["(", ")"],
 		["\"", "\""],
 		["'", "'"]
+	],
+	// symbols that are colourized
+	"colorizedBracketPairs": [
+		["{", "}"],
+		["[", "]"]
 	],
 	"folding": {
 		"offSide": true,
 		"markers": {
-			"start": "^\\s*#\\s*region\\b",
-			"end": "^\\s*#\\s*endregion\\b"
+			"start": "^[ \t]*#[ \t]*region\\b|^---[ \t]*(#.*)?$",
+			"end": "^[ \t]*#[ \t]*endregion\\b|^\\.{3}[ \t]*(#.*)?$"
 		}
 	},
 	"indentationRules": {
-		"increaseIndentPattern": "^\\s*.*(:|-) ?(&amp;\\w+)?(\\{[^}\"']*|\\([^)\"']*)?$",
-		"decreaseIndentPattern": "^\\s+\\}$"
+		"increaseIndentPattern": "^\\s*.*(:|-) ?(&\\w+)?(\\{[^}\"']*|\\[[^\\]\"']*)?$",
+		"decreaseIndentPattern": "^\\s+[\\]\\}]$"
 	}
 }
