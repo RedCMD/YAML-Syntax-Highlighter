@@ -1,379 +1,956 @@
 {
-	"name": "YAML",
+	"$schema": "https://raw.githubusercontent.com/RedCMD/TmLanguage-Syntax-Highlighter/main/vscode.tmLanguage.schema.json",
 	"scopeName": "source.yaml",
+	"name": "YAML Ain't Markup Language",
 	"patterns": [
-		{ "include": "#comment" },
-		{ "include": "#property" },
-		{ "include": "#directive" },
-		{
-			"match": "^---",
-			"name": "entity.other.document.begin.yaml"
-		},
-		{
-			"match": "^\\.{3}",
-			"name": "entity.other.document.end.yaml"
-		},
-		{ "include": "#node" }
+		{ "include": "#stream" }
 	],
 	"repository": {
-		"block-collection": {
+		"stream": {
+			"patterns": [
+				{
+					"comment": "allows me to just use `\\G` instead of the performance heavy `(^|\\G)`",
+					"begin": "^(?!\\G)",
+					"while": "^",
+					"name": "meta.stream.yaml",
+					"patterns": [
+						{ "include": "#byte-order-mark" },
+						{ "include": "#directives" },
+						{ "include": "#document" },
+						{ "include": "#indent" },
+						{ "include": "#nodes" }
+					]
+				},
+				{
+					"begin": "\\G",
+					"while": "\\G",
+					"name": "meta.stream.yaml",
+					"patterns": [
+						{ "include": "#byte-order-mark" },
+						{ "include": "#directives" },
+						{ "include": "#document" },
+						{ "include": "#indent" },
+						{ "include": "#nodes" }
+					]
+				}
+			]
+		},
+		"directives": {
+			"comment": "https://yaml.org/spec/1.2.2/#68-directives",
+			"patterns": [
+				{ "include": "source.yaml.1.2#directive-YAML" },
+				{ "include": "source.yaml.1.1#directive-YAML" },
+				{ "include": "source.yaml.1.0#directive-YAML" },
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#681-yaml-directives",
+					"begin": "(?=%YAML(?>[ \t]+|:)[0-9]+\\.[0-9]+)",
+					"end": "$",
+					"name": "yaml-1.x",
+					"patterns": [
+						{
+							"comment": "TODO: include all versions combined or smth",
+							"include": "source.yaml.1.2#yaml-1.2"
+						},
+						{ "include": "#presentation-detail" }
+					]
+				},
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#682-tag-directives",
+					"begin": "(?=%TAG[\r\n\t ])",
+					"while": "\\G(?!%|---[\r\n\t ])",
+					"patterns": [
+						{
+							"comment": "https://yaml.org/spec/1.2.2/#rule-c-tag-handle",
+							"begin": "\\G(%)(TAG)(?>([ \t]+)((!)(?>[0-9A-Za-z-]*(!))?))?",
+							"end": "$",
+							"beginCaptures": {
+								"1": { "name": "punctuation.definition.directive.begin.yaml" },
+								"2": { "name": "keyword.other.directive.tag.yaml" },
+								"3": { "name": "punctuation.whitespace.separator.yaml" },
+								"4": { "name": "storage.type.tag-handle.yaml" },
+								"5": { "name": "punctuation.definition.tag.begin.yaml" },
+								"6": { "name": "punctuation.definition.tag.end.yaml" }
+							},
+							"name": "meta.directive.yaml",
+							"patterns": [
+								{
+									"comment": "technically the beginning should only validate against a valid uri scheme [A-Za-z][A-Za-z0-9.+-]*",
+									"begin": "\\G[ \t]+(?!#)",
+									"end": "(?= |\t|$)",
+									"beginCaptures": { "0": { "name": "punctuation.whitespace.separator.yaml" } },
+									"contentName": "support.type.tag-prefix.yaml",
+									"patterns": [
+										{
+											"match": "%[0-9a-fA-F]{2}",
+											"name": "constant.character.escape.unicode.8-bit.yaml"
+										},
+										{
+											"match": "%[^\r\n\t ]{,2}",
+											"name": "invalid.illegal.constant.character.escape.unicode.8-bit.yaml"
+										},
+										{
+											"match": "\\G[,\\[\\]{}]",
+											"name": "invalid.illegal.character.uri.yaml"
+										},
+										{ "include": "#non-printable" },
+										{
+											"match": "[^\r\n\t a-zA-Z0-9-#;/?:@&=+$,_.!~*'()\\[\\]]+",
+											"name": "invalid.illegal.unrecognized.yaml"
+										}
+									]
+								},
+								{ "include": "#presentation-detail" }
+							]
+						},
+						{
+							"match": "\\G\\.{3}(?= |\t|$)",
+							"name": "invalid.illegal.entity.other.document.end.yaml"
+						},
+						{ "include": "#presentation-detail" }
+					]
+				},
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#68-directives",
+					"begin": "(%)([\\x85[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]+)",
+					"end": "$",
+					"beginCaptures": {
+						"0": { "name": "meta.directive.yaml" },
+						"1": { "name": "punctuation.definition.directive.begin.yaml" },
+						"2": { "name": "keyword.other.directive.other.yaml" }
+					},
+					"patterns": [
+						{
+							"match": "\\G([ \t]+)([\\x85[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]+)",
+							"captures": {
+								"1": { "name": "punctuation.whitespace.separator.yaml" },
+								"2": { "name": "string.unquoted.directive-name.yaml" }
+							}
+						},
+						{
+							"match": "([ \t]+)([\\x85[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]+)",
+							"captures": {
+								"1": { "name": "punctuation.whitespace.separator.yaml" },
+								"2": { "name": "string.unquoted.directive-parameter.yaml" }
+							}
+						},
+						{ "include": "#presentation-detail" }
+					]
+				}
+			]
+		},
+		"directive-invalid": {
+			"begin": "\\G(%)(YAML)",
+			"end": "$",
+			"beginCaptures": {
+				"1": { "name": "punctuation.definition.directive.begin.yaml" },
+				"2": { "name": "invalid.illegal.keyword.other.directive.yaml.yaml" }
+			},
+			"name": "meta.directive.yaml",
+			"patterns": [
+				{
+					"match": "\\G([ \t]+|:)([0-9]+\\.[0-9]+)?",
+					"captures": {
+						"1": { "name": "punctuation.whitespace.separator.yaml" },
+						"2": { "name": "constant.numeric.yaml-version.yaml" }
+					}
+				},
+				{ "include": "#presentation-detail" }
+			]
+		},
+		"document": {
+			"comment": "https://yaml.org/spec/1.2.2/#91-documents",
+			"patterns": [
+				{
+					"begin": "---(?= |\t|$)",
+					"while": "\\G(?!(?>\\.{3}|---)(?> |\t|$))",
+					"beginCaptures": { "0": { "name": "entity.other.document.begin.yaml" } },
+					"contentName": "meta.document.yaml",
+					"patterns": [
+						{ "include": "#indent" },
+						{ "include": "#nodes" }
+					]
+				},
+				{
+					"begin": "(?=\\.{3}(?> |\t|$))",
+					"while": "\\G(?!---(?> |\t|$))",
+					"contentName": "directives.yaml",
+					"patterns": [
+						{
+							"begin": "\\G\\.{3}",
+							"end": "$",
+							"beginCaptures": { "0": { "name": "entity.other.document.end.yaml" } },
+							"patterns": [ { "include": "#presentation-detail" } ]
+						},
+						{ "include": "#byte-order-mark" },
+						{ "include": "#directives" },
+						{ "include": "#presentation-detail" }
+					]
+				},
+				{
+					"match": "^( *)(?:-?( +)())(([\"']?)(match|begin|end)(\\3))(:) +([|>](\\d*)[-+]?)(?=, |,$| +#| *$)",
+					"comment": "            ^^  ^^^^^^^^                  ^^^"
+				}
+			]
+		},
+		"indent": {
+			"comment": "https://yaml.org/spec/1.2.2/#61-indentation-spaces",
+			"begin": "\\G( ++)(?!#|$)(\t*)",
+			"while": "\\G(?>(\\1)|(?= *(?>#|$)))",
+			"captures": {
+				"1": { "name": "punctuation.whitespace.indentation.yaml" },
+				"2": { "name": "invalid.illegal.whitespace.indentation.yaml markup.strikethrough" }
+			},
+			"name": "meta.indentation.yaml",
+			"patterns": [ { "include": "#nodes" } ]
+		},
+		"nodes": {
 			"patterns": [
 				{ "include": "#block-sequence" },
-				{ "include": "#block-mapping" }
+				{ "include": "#block-pair" },
+				{ "include": "#block-scalar" },
+				{ "include": "#map-value-implicit" },
+				{ "include": "#flow-mapping" },
+				{ "include": "#flow-sequence" },
+				{ "include": "#tag-implicit" },
+				{ "include": "#block-scalar-implicit" },
+				{ "include": "#alias" },
+				{ "include": "#anchor-property" },
+				{ "include": "#tag-property" },
+				{ "include": "#presentation-detail" }
 			]
 		},
 		"block-mapping": {
-			"patterns": [ { "include": "#block-pair" } ]
+			"include": "#block-pair"
 		},
-		"block-node": {
+		"block-sequence": {
+			"comment": "exceptions need to be made for nested block-sequences and block-mapping",
+			"begin": "\\G(-)([ \t]+(?=[#>|])|[ \t]*$|( )( *))",
+			"while": "\\G(?>\\3\\3\\4|(?= *(?>#|$)))",
+			"beginCaptures": {
+				"1": { "name": "punctuation.definition.block.sequence.item.yaml" },
+				"2": { "name": "punctuation.whitespace.separator.yaml" }
+			},
+			"whileCaptures": { "0": { "name": "punctuation.whitespace.indentation.yaml" } },
+			"name": "meta.block.sequence.yaml",
 			"patterns": [
-				{ "include": "#prototype" },
-				{ "include": "#block-scalar" },
-				{ "include": "#block-collection" },
-				{ "include": "#flow-scalar-plain-out" },
-				{ "include": "#flow-node" }
+				{ "include": "#indent" },
+				{ "include": "#nodes" }
 			]
 		},
 		"block-pair": {
 			"patterns": [
 				{
-					"begin": "\\?",
-					"beginCaptures": { "1": { "name": "punctuation.definition.key-value.begin.yaml" } },
-					"end": "(?=\\?)|^ *(:)|(:)",
-					"endCaptures": {
-						"1": { "name": "punctuation.separator.key-value.mapping.yaml" },
-						"2": { "name": "invalid.illegal.expected-newline.yaml" }
-					},
-					"name": "meta.block-mapping.yaml",
-					"patterns": [ { "include": "#block-node" } ]
-				},
-				{
-					"begin": "(?x)(?=(?x:[^\\s[-?:,\\[\\]{}#&*!|>'\"%@`]]|[?:-]\\S)([^\\s:]|:\\S|\\s+(?![#\\s]))*\\s*:(\\s|$))",
-					"end": "(?x)(?=\\s*$|\\s+\\#|\\s*:(\\s|$))",
+					"comment": "https://yaml.org/spec/1.2.2/#plain-style",
+					"begin": "\\G(?=\\x{85}|[^?:\\-,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?! |\t|$))(?=(?#TODO: fix this broken mess -->)(?>[^ #:]+#|:[^ \t]|[^ ]#| +|[^ #:]+)+:(?> |\t|$))",
+					"name": "meta.block.pair.key.yaml string.unquoted.other.in.yaml entity.name.tag.yaml",
+					"end": "(?=[ \t]*:(?> |\t|$))",
 					"patterns": [
-						{ "include": "#flow-scalar-plain-out-implicit-type" },
+						{ "include": "#tag-implicit" },
 						{
-							"begin": "(?x)[^\\s[-?:,\\[\\]{}#&*!|>'\"%@`]]|[?:-]\\S",
-							"beginCaptures": { "0": { "name": "entity.name.tag.yaml" } },
-							"contentName": "entity.name.tag.yaml",
-							"end": "(?x)(?=\\s*$|\\s+\\#|\\s*:(\\s|$))",
-							"name": "string.unquoted.plain.out.yaml"
-						}
+							"//begin": "\\G",
+							"end": "(?=:(?> |\t|$))",
+							"name": "string.quoted.other.out.yaml",
+							"//patterns": [ { "include": "#non-printable" } ]
+						},
+						{ "include": "#non-printable" }
 					]
 				},
 				{
-					"match": ":(?=\\s|$)",
-					"name": "punctuation.separator.key-value.mapping.yaml"
+					"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-explicit-key",
+					"begin": "\\?(?=[\r\n\t ])",
+					"end": "$",
+					"beginCaptures": { "0": { "name": "punctuation.definition.key-value.begin.yaml" } },
+					"name": "meta.flow.pair.explicit.yaml",
+					"patterns": [
+						{ "include": "#flow-double-in-key" },
+						{ "include": "#flow-plain-in-key" },
+						{ "include": "#flow-plain-in-implicit-type" },
+						{ "include": "#flow-map-value" },
+						{ "include": "#flow-mapping" },
+						{ "include": "#flow-sequence" },
+						{ "include": "#flow-double-in" },
+						{ "include": "#flow-single-in" },
+						{ "//include": "#flow-plain-in" },
+						{ "include": "#alias" },
+						{ "include": "#tag-property" },
+						{ "include": "#presentation-detail" }
+					]
+				},
+				{
+					"//begin": "\\G(?=\\x{85}|[^?:\\-,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?! |\t|$))",
+					"while": "\\G(?= |#|$)",
+					"name": "meta.pair.yaml",
+					"//patterns": [
+						{ "include": "#map-value-implicit" },
+						{ "include": "#tags-implicit" },
+						{
+							"comment": "https://yaml.org/spec/1.2.2/#plain-style",
+							"begin": "\\G(?=\\x{85}|[^?:\\-,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?! |\t|$))",
+							"name": "string.quoted.other.out.yaml entity.name.tag.yaml",
+							"end": "(?=[ \t]*:(?> |\t|$))",
+							"patterns": [ { "include": "#non-printable" } ]
+						},
+						{ "include": "#flow-scalar-implicit" },
+						{ "include": "#presentation-detail" }
+					]
 				}
 			]
 		},
 		"block-scalar": {
-			"begin": "(?:(\\|)|(>))([1-9])?([-+])?(.*\\n?)",
-			"beginCaptures": {
-				"1": { "name": "keyword.control.flow.block-scalar.literal.yaml" },
-				"2": { "name": "keyword.control.flow.block-scalar.folded.yaml" },
-				"3": { "name": "constant.numeric.indentation-indicator.yaml" },
-				"4": { "name": "storage.modifier.chomping-indicator.yaml" },
-				"5": {
+			"comment": "https://yaml.org/spec/1.2.2/#81-block-scalar-styles",
+			"patterns": [
+				{
+					"begin": "(?>(\\|)|(>))(?<chomp>[+-])?((1)|(2)|(3)|(4)|(5)|(6)|(7)|(8)|(9))(?(<chomp>)|([+-]))?",
+					"while": "\\G(?>(?!\\5) |(?!\\6)  |(?!\\7)   |(?!\\8) {4}|(?!\\9) {5}|(?!\\10) {6}|(?!\\11) {7}|(?!\\12) {8}|(?!\\13) {9}|$)",
+					"beginCaptures": {
+						"1": { "name": "keyword.control.flow.block-scalar.literal.yaml" },
+						"2": { "name": "keyword.control.flow.block-scalar.folded.yaml" },
+						"3": { "name": "storage.modifier.chomping-indicator.yaml" },
+						"4": { "name": "constant.numeric.indentation-indicator.yaml" },
+						"14": { "name": "storage.modifier.chomping-indicator.yaml" }
+					},
+					"whileCaptures": { "0": { "name": "punctuation.whitespace.indentation.yaml" } },
+					"name": "meta.scalar.yaml",
 					"patterns": [
-						{ "include": "#comment" },
 						{
-							"match": ".+",
-							"name": "invalid.illegal.expected-comment-or-newline.yaml"
+							"begin": "$",
+							"while": "\\G",
+							"contentName": "string.unquoted.block.yaml",
+							"patterns": [ { "include": "#non-printable" } ]
+						},
+						{
+							"begin": "\\G",
+							"end": "$",
+							"patterns": [ { "include": "#presentation-detail" } ]
+						}
+					]
+				},
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#812-literal-style",
+					"begin": "(?>(\\|)|(>))([+-]?)",
+					"while": "\\G(?= |$)",
+					"beginCaptures": {
+						"1": { "name": "keyword.control.flow.block-scalar.literal.yaml" },
+						"2": { "name": "keyword.control.flow.block-scalar.folded.yaml" },
+						"3": { "name": "storage.modifier.chomping-indicator.yaml" }
+					},
+					"name": "meta.scalar.yaml",
+					"patterns": [
+						{
+							"begin": "$",
+							"while": "\\G",
+							"patterns": [
+								{
+									"begin": "\\G( +)(?!$)",
+									"while": "\\G(?>(\\1)|( *)$|( *)(.))",
+									"beginCaptures": { "1": { "name": "punctuation.whitespace.indentation.yaml" } },
+									"whileCaptures": {
+										"1": { "name": "punctuation.whitespace.indentation.yaml" },
+										"2": { "name": "punctuation.whitespace.separator.yaml" },
+										"3": { "name": "punctuation.whitespace.indentation.yaml" },
+										"4": { "name": "invalid.illegal.expected-indentation.yaml" }
+									},
+									"contentName": "string.unquoted.block.yaml",
+									"patterns": [ { "include": "#non-printable" } ]
+								},
+								{ "include": "#non-printable" }
+							]
+						},
+						{
+							"begin": "\\G",
+							"end": "$",
+							"patterns": [ { "include": "#presentation-detail" } ]
 						}
 					]
 				}
+			]
+		},
+		"block-scalar-implicit": {
+			"comment": "https://yaml.org/spec/1.2.2/#flow-scalar-styles",
+			"patterns": [
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#double-quoted-style",
+					"begin": "\"",
+					"end": "\"",
+					"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
+					"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
+					"name": "string.quoted.double.yaml",
+					"patterns": [
+						{
+							"match": "[\\x0-\\x08\\x0A-\\x1F]+",
+							"name": "invalid.illegal.character.yaml"
+						},
+						{
+							"match": "\\\\[0abt\tnvfre \"/\\\\N_LP]",
+							"name": "constant.character.escape.yaml"
+						},
+						{
+							"match": "\\\\x[0-9a-fA-F]{2}",
+							"name": "constant.character.escape.unicode.8-bit.yaml"
+						},
+						{
+							"match": "\\\\u[0-9a-fA-F]{4}",
+							"name": "constant.character.escape.unicode.16-bit.yaml"
+						},
+						{
+							"match": "\\\\U[0-9a-fA-F]{8}",
+							"name": "constant.character.escape.unicode.32-bit.yaml"
+						},
+						{
+							"match": "\\\\.",
+							"name": "invalid.illegal.constant.character.escape.yaml"
+						}
+					]
+				},
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#single-quoted-style",
+					"begin": "'",
+					"end": "'(?!')",
+					"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
+					"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
+					"name": "string.quoted.single.yaml",
+					"patterns": [
+						{
+							"match": "[\\x0-\\x1F&&[^\t]]+",
+							"name": "invalid.illegal.character.yaml"
+						},
+						{
+							"match": "''",
+							"name": "constant.character.escape.single-quote.yaml"
+						}
+					]
+				},
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#plain-style",
+					"begin": "(?=\\x{85}|[^?:\\-,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?! |\t|$))",
+					"end": "(?=(?>\\G|[ \t]+)#)",
+					"name": "string.quoted.other.out.yaml",
+					"patterns": [
+						{ "include": "#tag-implicit" },
+						{ "include": "#non-printable" }
+					]
+				},
+				{
+					"//begin": "\\G(?=\\x{85}|[^?:\\-,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?! |\t|$))",
+					"end": "\\G(?=[ \t]+#|[ \t]*$)",
+					"//patterns": [
+						{
+							"comment": "https://yaml.org/spec/1.2.2/#plain-style",
+							"begin": "\\G(?=\\x{85}|[^?:\\-,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?! |\t|$))",
+							"while": "\\G(?!.*[ \t]#)",
+							"name": "string.quoted.other.out.yaml",
+							"patterns": [ { "include": "#presentation-detail" } ]
+						}
+					]
+				}
+			]
+		},
+		"block-plain-in": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-multi-line",
+			"begin": "(?=[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ,\\[\\]{}]))",
+			"end": "(?=(?>[ \t]+|\\G)#|[ \t]*(?>[,\\[\\]{}]|:[\r\n\t ,\\[\\]{}]))",
+			"name": "string.unquoted.other.in.yaml",
+			"patterns": [
+				{
+					"match": "\\G[ \t]+|[ \t]+$",
+					"name": "punctuation.whitespace.separator.yaml"
+				},
+				{ "include": "#non-printable" }
+			]
+		},
+		"map-value-implicit": {
+			"comment": "https://yaml.org/spec/1.2.2/#block-mappings",
+			"begin": "(:)([ \t]+|$)",
+			"while": "\\G(?=-? |#|-?$|-\t|])",
+			"beginCaptures": {
+				"1": { "name": "punctuation.separator.key-value.mapping.yaml" },
+				"2": { "name": "punctuation.whitespace.separator.yaml" }
 			},
-			"end": "^(?=\\S)|(?!\\G)",
+			"name": "meta.map.yaml",
 			"patterns": [
-				{
-					"begin": "^([ ]+)(?! )",
-					"end": "^(?!\\1|\\s*$)",
-					"name": "string.unquoted.block.yaml"
-				}
-			]
-		},
-		"block-sequence": {
-			"match": "(-)(?!\\S)",
-			"name": "punctuation.definition.block.sequence.item.yaml"
-		},
-		"comment": {
-			"begin": "(?:(^[ \\t]*)|[ \\t]+)(?=#\\p{Print}*$)",
-			"beginCaptures": { "1": { "name": "punctuation.whitespace.comment.leading.yaml" } },
-			"end": "(?!\\G)",
-			"patterns": [
-				{
-					"begin": "#",
-					"beginCaptures": { "0": { "name": "punctuation.definition.comment.yaml" } },
-					"end": "\\n",
-					"name": "comment.line.number-sign.yaml"
-				}
-			]
-		},
-		"directive": {
-			"begin": "^%",
-			"beginCaptures": { "0": { "name": "punctuation.definition.directive.begin.yaml" } },
-			"end": "(?=$|[ \\t]+($|#))",
-			"name": "meta.directive.yaml",
-			"patterns": [
-				{
-					"captures": {
-						"1": { "name": "keyword.other.directive.yaml.yaml" },
-						"2": { "name": "constant.numeric.yaml-version.yaml" }
-					},
-					"match": "\\G(YAML)[ \\t]+(\\d+\\.\\d+)"
-				},
-				{
-					"captures": {
-						"1": { "name": "keyword.other.directive.tag.yaml" },
-						"2": { "name": "storage.type.tag-handle.yaml" },
-						"3": { "name": "support.type.tag-prefix.yaml" }
-					},
-					"match": "(?x)\\G(TAG)(?:[ \\t]+(!(?:[0-9A-Za-z\\-]*!)?)(?:[ \\t]+(!(?x:%[0-9A-Fa-f]{2}|[0-9A-Za-z\\-#;/?:@&=+$,_.!~*'()\\[\\]])*|(?![,!\\[\\]{}])(?x:%[0-9A-Fa-f]{2}|[0-9A-Za-z\\-#;/?:@&=+$,_.!~*'()\\[\\]])+))?)?"
-				},
-				{
-					"captures": {
-						"1": { "name": "support.other.directive.reserved.yaml" },
-						"2": { "name": "string.unquoted.directive-name.yaml" },
-						"3": { "name": "string.unquoted.directive-parameter.yaml" }
-					},
-					"match": "(?x)\\G(\\w+)(?:[ \\t]+(\\w+)(?:[ \\t]+(\\w+))?)?"
-				},
-				{
-					"match": "\\S+",
-					"name": "invalid.illegal.unrecognized.yaml"
-				}
-			]
-		},
-		"flow-alias": {
-			"captures": {
-				"1": { "name": "keyword.control.flow.alias.yaml" },
-				"2": { "name": "punctuation.definition.alias.yaml" },
-				"3": { "name": "variable.other.alias.yaml" },
-				"4": { "name": "invalid.illegal.character.anchor.yaml" }
-			},
-			"match": "((\\*))([^\\s\\[\\]/{/},]+)([^\\s\\]},]\\S*)?"
-		},
-		"flow-collection": {
-			"patterns": [
-				{ "include": "#flow-sequence" },
-				{ "include": "#flow-mapping" }
+				{ "include": "#indent" },
+				{ "include": "#nodes" },
+				{ "include": "#presentation-detail" }
 			]
 		},
 		"flow-mapping": {
-			"begin": "\\{",
+			"comment": "https://yaml.org/spec/1.2.2/#742-flow-mappings",
+			"begin": "{",
+			"end": "}",
 			"beginCaptures": { "0": { "name": "punctuation.definition.mapping.begin.yaml" } },
-			"end": "\\}",
 			"endCaptures": { "0": { "name": "punctuation.definition.mapping.end.yaml" } },
-			"name": "meta.flow-mapping.yaml",
-			"patterns": [
-				{ "include": "#prototype" },
-				{
-					"match": ",",
-					"name": "punctuation.separator.mapping.yaml"
-				},
-				{ "include": "#flow-pair" }
-			]
-		},
-		"flow-node": {
-			"patterns": [
-				{ "include": "#prototype" },
-				{ "include": "#flow-alias" },
-				{ "include": "#flow-collection" },
-				{ "include": "#flow-scalar" }
-			]
-		},
-		"flow-pair": {
+			"name": "meta.flow.mapping.yaml",
 			"patterns": [
 				{
-					"begin": "\\?",
-					"beginCaptures": { "0": { "name": "punctuation.definition.key-value.begin.yaml" } },
-					"end": "(?=[},\\]])",
-					"name": "meta.flow-pair.explicit.yaml",
+					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-s-flow-map-entries",
+					"begin": "(?<=\\[)\\G(?=[\r\n\t ,#])|,",
+					"end": "(?=[^\r\n\t ,#])",
+					"beginCaptures": { "0": { "name": "punctuation.separator.map.yaml" } },
 					"patterns": [
-						{ "include": "#prototype" },
-						{ "include": "#flow-pair" },
-						{ "include": "#flow-node" },
 						{
-							"begin": ":(?=\\s|$|[\\[\\]{},])",
-							"beginCaptures": { "0": { "name": "punctuation.separator.key-value.mapping.yaml" } },
-							"end": "(?=[},\\]])",
-							"patterns": [ { "include": "#flow-value" } ]
-						}
+							"match": ",+",
+							"name": "invalid.illegal.separator.sequence.yaml"
+						},
+						{ "include": "#presentation-detail" }
 					]
 				},
-				{
-					"begin": "(?x)(?=(?:[^\\s[-?:,\\[\\]{}#&*!|>'\"%@`]]|[?:-][^\\s[\\[\\]{},]])([^\\s:[\\[\\]{},]]|:[^\\s[\\[\\]{},]]|\\s+(?![#\\s]))*\\s*:(\\s|$))",
-					"end": "(?x)(?=\\s*$|\\s+\\#|\\s*:(\\s|$)|\\s*:[\\[\\]{},]|\\s*[\\[\\]{},])",
-					"name": "meta.flow-pair.key.yaml",
-					"patterns": [
-						{ "include": "#flow-scalar-plain-in-implicit-type" },
-						{
-							"begin": "(?x)[^\\s[-?:,\\[\\]{}#&*!|>'\"%@`]]|[?:-][^\\s[\\[\\]{},]]",
-							"beginCaptures": { "0": { "name": "entity.name.tag.yaml" } },
-							"contentName": "entity.name.tag.yaml",
-							"end": "(?x)(?=\\s*$|\\s+\\#|\\s*:(\\s|$)|\\s*:[\\[\\]{},]|\\s*[\\[\\]{},])",
-							"name": "string.unquoted.plain.in.yaml"
-						}
-					]
-				},
-				{ "include": "#flow-node" },
-				{
-					"begin": ":(?=\\s|$|[\\[\\]{},])",
-					"captures": { "0": { "name": "punctuation.separator.key-value.mapping.yaml" } },
-					"end": "(?=[},\\]])",
-					"name": "meta.flow-pair.yaml",
-					"patterns": [ { "include": "#flow-value" } ]
-				}
-			]
-		},
-		"flow-scalar": {
-			"patterns": [
-				{ "include": "#flow-scalar-double-quoted" },
-				{ "include": "#flow-scalar-single-quoted" },
-				{ "include": "#flow-scalar-plain-in" }
-			]
-		},
-		"flow-scalar-double-quoted": {
-			"begin": "\"",
-			"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
-			"end": "\"",
-			"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
-			"name": "string.quoted.double.yaml",
-			"patterns": [
-				{
-					"match": "\\\\([0abtnvfre \"/\\\\N_Lp]|x\\d\\d|u\\d{4}|U\\d{8})",
-					"name": "constant.character.escape.yaml"
-				},
-				{
-					"match": "\\\\\\n",
-					"name": "constant.character.escape.double-quoted.newline.yaml"
-				}
-			]
-		},
-		"flow-scalar-plain-in": {
-			"patterns": [
-				{ "include": "#flow-scalar-plain-in-implicit-type" },
-				{
-					"begin": "(?x)[^\\s[-?:,\\[\\]{}#&*!|>'\"%@`]]|[?:-][^\\s[\\[\\]{},]]",
-					"end": "(?x)(?=\\s*$|\\s+\\#|\\s*:(\\s|$)|\\s*:[\\[\\]{},]|\\s*[\\[\\]{},])",
-					"name": "string.unquoted.plain.in.yaml"
-				}
-			]
-		},
-		"flow-scalar-plain-in-implicit-type": {
-			"patterns": [
-				{
-					"captures": {
-						"1": { "name": "constant.language.null.yaml" },
-						"2": { "name": "constant.language.boolean.yaml" },
-						"3": { "name": "constant.numeric.integer.yaml" },
-						"4": { "name": "constant.numeric.float.yaml" },
-						"5": { "name": "constant.other.timestamp.yaml" },
-						"6": { "name": "constant.language.value.yaml" },
-						"7": { "name": "constant.language.merge.yaml" }
-					},
-					"match": "(?x)(?x:(null|Null|NULL|~)|(y|Y|yes|Yes|YES|n|N|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)|((?:[-+]?0b[0-1_]+|[-+]?0[0-7_]+|[-+]?(?:0|[1-9][0-9_]*)|[-+]?0x[0-9a-fA-F_]+|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+))|((?x:[-+]?(?:[0-9][0-9_]*)?\\.[0-9.]*(?:[eE][-+][0-9]+)?|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*|[-+]?\\.(?:inf|Inf|INF)|\\.(?:nan|NaN|NAN)))|((?x:\\d{4}-\\d{2}-\\d{2}|\\d{4}-\\d{1,2}-\\d{1,2}(?:[Tt]|[ \\t]+)\\d{1,2}:\\d{2}:\\d{2}(?:\\.\\d*)?(?:[ \\t]*Z|[-+]\\d{1,2}(?::\\d{1,2})?)?))|(=)|(<<))(?=\\s*$|\\s+\\#|\\s*:(\\s|$)|\\s*:[\\[\\]{},]|\\s*[\\[\\]{},])"
-				}
-			]
-		},
-		"flow-scalar-plain-out": {
-			"patterns": [
-				{ "include": "#flow-scalar-plain-out-implicit-type" },
-				{
-					"begin": "(?x)[^\\s[-?:,\\[\\]{}#&*!|>'\"%@`]]|[?:-]\\S",
-					"end": "(?x)(?=\\s*$|\\s+\\#|\\s*:(\\s|$))",
-					"name": "string.unquoted.plain.out.yaml"
-				}
-			]
-		},
-		"flow-scalar-plain-out-implicit-type": {
-			"patterns": [
-				{
-					"captures": {
-						"1": { "name": "constant.language.null.yaml" },
-						"2": { "name": "constant.language.boolean.yaml" },
-						"3": { "name": "constant.numeric.integer.yaml" },
-						"4": { "name": "constant.numeric.float.yaml" },
-						"5": { "name": "constant.other.timestamp.yaml" },
-						"6": { "name": "constant.language.value.yaml" },
-						"7": { "name": "constant.language.merge.yaml" }
-					},
-					"match": "(?x)(?x:(null|Null|NULL|~)|(y|Y|yes|Yes|YES|n|N|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)|((?:[-+]?0b[0-1_]+|[-+]?0[0-7_]+|[-+]?(?:0|[1-9][0-9_]*)|[-+]?0x[0-9a-fA-F_]+|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+))|((?x:[-+]?(?:[0-9][0-9_]*)?\\.[0-9.]*(?:[eE][-+][0-9]+)?|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*|[-+]?\\.(?:inf|Inf|INF)|\\.(?:nan|NaN|NAN)))|((?x:\\d{4}-\\d{2}-\\d{2}|\\d{4}-\\d{1,2}-\\d{1,2}(?:[Tt]|[ \\t]+)\\d{1,2}:\\d{2}:\\d{2}(?:\\.\\d*)?(?:[ \\t]*Z|[-+]\\d{1,2}(?::\\d{1,2})?)?))|(=)|(<<))(?x:(?=\\s*$|\\s+\\#|\\s*:(\\s|$)))"
-				}
-			]
-		},
-		"flow-scalar-single-quoted": {
-			"begin": "'",
-			"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
-			"end": "'(?!')",
-			"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
-			"name": "string.quoted.single.yaml",
-			"patterns": [
-				{
-					"match": "''",
-					"name": "constant.character.escape.single-quoted.yaml"
-				}
+				{ "include": "#flow-map-key" },
+				{ "include": "#flow-double-in-key" },
+				{ "include": "#flow-plain-in-key" },
+				{ "include": "#flow-plain-in-implicit-type" },
+				{ "include": "#flow-mapping" },
+				{ "include": "#flow-sequence" },
+				{ "include": "#flow-double-in" },
+				{ "include": "#flow-single-in" },
+				{ "//include": "#flow-plain-in" },
+				{ "include": "#alias" },
+				{ "include": "#tag-property" },
+				{ "include": "#presentation-detail" }
 			]
 		},
 		"flow-sequence": {
+			"comment": "https://yaml.org/spec/1.2.2/#741-flow-sequences",
 			"begin": "\\[",
+			"end": "]",
 			"beginCaptures": { "0": { "name": "punctuation.definition.sequence.begin.yaml" } },
-			"end": "\\]",
 			"endCaptures": { "0": { "name": "punctuation.definition.sequence.end.yaml" } },
-			"name": "meta.flow-sequence.yaml",
+			"name": "meta.flow.sequence.yaml",
 			"patterns": [
-				{ "include": "#prototype" },
 				{
-					"match": ",",
-					"name": "punctuation.separator.sequence.yaml"
+					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-s-flow-seq-entries",
+					"begin": "(?<=\\[)\\G(?=[\r\n\t ,#])|,",
+					"end": "(?=[^\r\n\t ,#])",
+					"beginCaptures": { "0": { "name": "punctuation.separator.sequence.yaml" } },
+					"patterns": [
+						{
+							"match": ",+",
+							"name": "invalid.illegal.separator.sequence.yaml"
+						},
+						{ "include": "#presentation-detail" }
+					]
 				},
-				{ "include": "#flow-pair" },
-				{ "include": "#flow-node" }
+				{ "include": "#flow-double-in-key" },
+				{ "include": "#flow-plain-in-key" },
+				{ "include": "#flow-plain-in-implicit-type" },
+				{ "include": "#flow-map-key" },
+				{ "include": "#flow-mapping" },
+				{ "include": "#flow-sequence" },
+				{ "include": "#flow-double-in" },
+				{ "include": "#flow-single-in" },
+				{ "//include": "#flow-plain-in" },
+				{ "include": "#alias" },
+				{ "include": "#tag-property" },
+				{ "include": "#presentation-detail" }
 			]
 		},
-		"flow-value": {
+		"flow-map-key": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-entry",
 			"patterns": [
 				{
-					"begin": "\\G(?![},\\]])",
-					"end": "(?=[},\\]])",
-					"name": "meta.flow-pair.value.yaml",
-					"patterns": [ { "include": "#flow-node" } ]
+					"begin": "\\?(?=[\r\n\t ])",
+					"end": "(?=[,}\\]])",
+					"beginCaptures": { "0": { "name": "punctuation.definition.key-value.begin.yaml" } },
+					"name": "meta.flow.pair.explicit.yaml",
+					"patterns": [
+						{ "include": "#flow-double-in-key" },
+						{ "include": "#flow-plain-in-key" },
+						{ "include": "#flow-plain-in-implicit-type" },
+						{ "include": "#flow-map-value" },
+						{ "include": "#flow-mapping" },
+						{ "include": "#flow-sequence" },
+						{ "include": "#flow-double-in" },
+						{ "include": "#flow-single-in" },
+						{ "//include": "#flow-plain-in" },
+						{ "include": "#alias" },
+						{ "include": "#tag-property" },
+						{ "include": "#presentation-detail" }
+					]
+				},
+				{ "include": "#flow-map-value" }
+			]
+		},
+		"flow-map-value": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-flow-map-separate-value",
+			"begin": ":",
+			"end": "(?=[,}\\]])",
+			"beginCaptures": { "0": { "name": "punctuation.separator.key-value.mapping.yaml" } },
+			"name": "meta.flow.pair.value.yaml",
+			"patterns": [
+				{ "include": "#flow-plain-in-implicit-type" },
+				{ "include": "#flow-mapping" },
+				{ "include": "#flow-sequence" },
+				{ "include": "#flow-double-in" },
+				{ "include": "#flow-single-in" },
+				{ "//include": "#flow-plain-in" },
+				{ "include": "#alias" },
+				{ "include": "#tag-property" },
+				{ "include": "#presentation-detail" }
+			]
+		},
+		"flow-double-in": {
+			"comment": "https://yaml.org/spec/1.2.2/#double-quoted-style",
+			"begin": "\"",
+			"end": "\"",
+			"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
+			"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
+			"name": "string.quoted.double.in.yaml",
+			"patterns": [
+				{
+					"match": "(?<!\")\\G[ \t]+",
+					"name": "punctuation.whitespace.separator.yaml"
+				},
+				{
+					"match": "[ \t]+$",
+					"name": "punctuation.whitespace.separator.yaml"
+				},
+				{
+					"match": "[^\r\n\t -\\x{10FFFF}]+",
+					"name": "invalid.illegal.character.yaml"
+				},
+				{
+					"match": "\\\\[\r\n\t0abtnvfre \"/\\\\N_LP]",
+					"name": "constant.character.escape.yaml"
+				},
+				{
+					"match": "\\\\x[0-9a-fA-F]{2}",
+					"name": "constant.character.escape.unicode.8-bit.yaml"
+				},
+				{
+					"match": "\\\\u[0-9a-fA-F]{4}",
+					"name": "constant.character.escape.unicode.16-bit.yaml"
+				},
+				{
+					"match": "\\\\U[0-9a-fA-F]{8}",
+					"name": "constant.character.escape.unicode.32-bit.yaml"
+				},
+				{
+					"match": "\\\\(?>x[^\"]{,2}|u[^\"]{,4}|U[^\"]{,8}|.)",
+					"name": "invalid.illegal.constant.character.escape.yaml"
 				}
 			]
 		},
-		"node": {
-			"patterns": [ { "include": "#block-node" } ]
-		},
-		"property": {
-			"begin": "(?=!|&)",
-			"end": "(?!\\G)",
-			"name": "meta.property.yaml",
+		"flow-single-in": {
+			"comment": "https://yaml.org/spec/1.2.2/#single-quoted-style",
+			"begin": "'",
+			"end": "'(?!')",
+			"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
+			"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
+			"name": "string.quoted.single.in.yaml",
 			"patterns": [
 				{
-					"captures": {
-						"1": { "name": "keyword.control.property.anchor.yaml" },
-						"2": { "name": "punctuation.definition.anchor.yaml" },
-						"3": { "name": "entity.name.type.anchor.yaml" },
-						"4": { "name": "invalid.illegal.character.anchor.yaml" }
-					},
-					"match": "\\G((&))([^\\s\\[\\]/{/},]+)(\\S+)?"
+					"match": "\\G[ \t]+|[ \t]+$",
+					"name": "punctuation.whitespace.separator.yaml"
 				},
 				{
-					"match": "(?x)\\G(?:!<(?:%[0-9A-Fa-f]{2}|[0-9A-Za-z\\-#;/?:@&=+$,_.!~*'()\\[\\]])+>|!(?:[0-9A-Za-z\\-]*!)?(?:%[0-9A-Fa-f]{2}|[0-9A-Za-z\\-#;/?:@&=+$_.~*'()])+|!)(?=\\ |\\t|$)",
-					"name": "storage.type.tag-handle.yaml"
+					"match": "[^\r\n\t -\\x{10FFFF}]+",
+					"name": "invalid.illegal.character.yaml"
 				},
 				{
-					"match": "\\S+",
-					"name": "invalid.illegal.tag-handle.yaml"
+					"match": "''",
+					"name": "constant.character.escape.single-quote.yaml"
 				}
 			]
 		},
-		"prototype": {
+		"flow-plain-in": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-multi-line",
+			"begin": "(?=[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ,\\[\\]{}]))",
+			"end": "(?=(?>[ \t]+|\\G)#|[ \t]*(?>[,\\[\\]{}]|:[\r\n\t ,\\[\\]{}]))",
+			"name": "string.unquoted.other.in.yaml",
 			"patterns": [
+				{
+					"match": "\\G[ \t]+|[ \t]+$",
+					"name": "punctuation.whitespace.separator.yaml"
+				},
+				{ "include": "#non-printable" }
+			]
+		},
+		"flow-plain-in-type": {
+			"comment": "https://yaml.org/spec/1.2.2/#103-core-schema",
+			"patterns": [
+				{
+					"match": "\\G(?>null|Null|NULL|~)(?=[ \t]+#|[ \t]*(?>[\r\n,}\\]]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.language.null.yaml"
+				},
+				{
+					"match": "\\G(?>true|True|TRUE|false|False|FALSE)(?=[ \t]+#|[ \t]*(?>[\r\n,}\\]]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.language.boolean.yaml"
+				},
+				{
+					"match": "\\G[+-]?[0-9]+(?=[ \t]+#|[ \t]*(?>[\r\n,}\\]]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.integer.decimal.yaml"
+				},
+				{
+					"match": "\\G0o[0-7]+(?=[ \t]+#|[ \t]*(?>[\r\n,}\\]]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.integer.octal.yaml"
+				},
+				{
+					"match": "\\G0x[0-9a-fA-F]+(?=[ \t]+#|[ \t]*(?>[\r\n,}\\]]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.integer.hexadecimal.yaml"
+				},
+				{
+					"match": "\\G[+-]?(?>\\.[0-9]+|[0-9]+(?>\\.[0-9]*)?)(?>[eE][+-]?[0-9]+)?(?=[ \t]+#|[ \t]*(?>[\r\n,}\\]]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.float.yaml"
+				},
+				{
+					"match": "\\G[+-]?\\.(?>inf|Inf|INF)(?=[ \t]+#|[ \t]*(?>[\r\n,}\\]]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.float.inf.yaml"
+				},
+				{
+					"match": "\\G\\.(?>nan|NaN|NAN)(?=[ \t]+#|[ \t]*(?>[\r\n,}\\]]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.float.nan.yaml"
+				}
+			]
+		},
+		"flow-plain-in-implicit-type": {
+			"comment": "*try* to fix the problem of `True\nTrue` being marked as 2 booleans rather than a single string",
+			"begin": "(?=[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ,\\[\\]{}]))",
+			"end": "(?=(?>[ \t]+|\\G)#|[ \t]*(?>[,\\[\\]{}]|:[\r\n\t ,\\[\\]{}]))",
+			"patterns": [
+				{ "include": "#flow-plain-in-type" },
+				{ "include": "#flow-plain-in" }
+			]
+		},
+		"flow-plain-in-key": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-yaml-key-entry",
+			"begin": "(?<=^|[\t ,\\[{])(?=(?>[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ,\\[\\]{}]))(?>[^:#,\\[\\]{}]++|(?<! |\t)#++|:(?=[^\r\n\t ,\\[\\]{}]))++:[\r\n\t ,\\[\\]{}])",
+			"end": "(?=[ \t]*:[\r\n\t ,\\[\\]{}])",
+			"name": "meta.flow.pair.key.yaml string.unquoted.other.in.yaml entity.name.tag.yaml",
+			"patterns": [ { "include": "#flow-plain-in-type" } ]
+		},
+		"flow-double-in-key": {
+			"comment": "https://yaml.org/spec/1.2.2/#double-quoted-style",
+			"begin": "\"(?=(?>[^\\\\\"]++|\\\\.)*+\"[ \t]*+:)",
+			"end": "\"",
+			"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
+			"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
+			"name": "meta.flow.pair.key.yaml string.quoted.double.in.yaml entity.name.tag.yaml",
+			"patterns": [
+				{
+					"match": "[^\r\n\t -\\x{10FFFF}]+",
+					"name": "invalid.illegal.character.yaml"
+				},
+				{
+					"match": "\\\\[\r\n\t0abtnvfre \"/\\\\N_LP]",
+					"name": "constant.character.escape.yaml"
+				},
+				{
+					"match": "\\\\x[0-9a-fA-F]{2}",
+					"name": "constant.character.escape.unicode.8-bit.yaml"
+				},
+				{
+					"match": "\\\\u[0-9a-fA-F]{4}",
+					"name": "constant.character.escape.unicode.16-bit.yaml"
+				},
+				{
+					"match": "\\\\U[0-9a-fA-F]{8}",
+					"name": "constant.character.escape.unicode.32-bit.yaml"
+				},
+				{
+					"match": "\\\\(?>x[^\"]{,2}|u[^\"]{,4}|U[^\"]{,8}|.)",
+					"name": "invalid.illegal.constant.character.escape.yaml"
+				}
+			]
+		},
+		"tag-implicit": {
+			"patterns": [
+				{
+					"match": "\\G(?>null|Null|NULL|~)(?=[ \t]*:(?> |\t|$)|[ \t]*$|[ \t]+#)",
+					"name": "constant.language.null.yaml"
+				},
+				{
+					"match": "\\G(?>true|True|TRUE|false|False|FALSE)(?=[ \t]*:(?> |\t|$)|[ \t]*$|[ \t]+#)",
+					"name": "constant.language.boolean.yaml"
+				},
+				{
+					"match": "\\G[+-]?[0-9]+(?=[ \t]*:(?> |\t|$)|[ \t]*$|[ \t]+#)",
+					"name": "constant.numeric.integer.decimal.yaml"
+				},
+				{
+					"match": "\\G0o[0-7]+(?=[ \t]*:(?> |\t|$)|[ \t]*$|[ \t]+#)",
+					"name": "constant.numeric.integer.octal.yaml"
+				},
+				{
+					"match": "\\G0x[0-9a-fA-F]+(?=[ \t]*:(?> |\t|$)|[ \t]*$|[ \t]+#)",
+					"name": "constant.numeric.integer.hexadecimal.yaml"
+				},
+				{
+					"match": "\\G[+-]?(?>\\.[0-9]+|[0-9]+(?>\\.[0-9]*)?)(?>[eE][+-]?[0-9]+)?(?=[ \t]*:(?> |\t|$)|[ \t]*$|[ \t]+#)",
+					"name": "constant.numeric.float.yaml"
+				},
+				{
+					"match": "\\G[+-]?\\.(?>inf|Inf|INF)(?=[ \t]*:(?> |\t|$)|[ \t]*$|[ \t]+#)",
+					"name": "constant.numeric.float.inf.yaml"
+				},
+				{
+					"match": "\\G\\.(?>nan|NaN|NAN)(?=[ \t]*:(?> |\t|$)|[ \t]*$|[ \t]+#)",
+					"name": "constant.numeric.float.nan.yaml"
+				}
+			]
+		},
+		"tag-property": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-tag-property",
+			"patterns": [
+				{
+					"match": "!(?=[\r\n\t ])",
+					"name": "storage.type.tag.non-specific.yaml punctuation.definition.tag.non-specific.yaml"
+				},
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#rule-c-verbatim-tag",
+					"begin": "!<",
+					"end": ">",
+					"beginCaptures": { "0": { "name": "punctuation.definition.tag.begin.yaml" } },
+					"endCaptures": { "0": { "name": "punctuation.definition.tag.end.yaml" } },
+					"name": "storage.type.tag.verbatim.yaml",
+					"patterns": [
+						{
+							"match": "%[0-9a-fA-F]{2}",
+							"name": "constant.character.escape.unicode.8-bit.yaml"
+						},
+						{
+							"match": "%[^\r\n\t ]{,2}",
+							"name": "invalid.illegal.constant.character.escape.unicode.8-bit.yaml"
+						},
+						{ "include": "#non-printable" },
+						{
+							"match": "[^\r\n\t a-zA-Z0-9-#;/?:@&=+$,_.!~*'()\\[\\]%]+",
+							"name": "invalid.illegal.unrecognized.yaml"
+						}
+					]
+				},
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-shorthand-tag",
+					"begin": "(?=!)",
+					"end": "(?=[\r\n\t ])",
+					"name": "storage.type.tag.shorthand.yaml",
+					"patterns": [
+						{
+							"comment": "https://yaml.org/spec/1.2.2/#rule-c-secondary-tag-handle",
+							"match": "\\G!!",
+							"name": "punctuation.definition.tag.secondary.yaml"
+						},
+						{
+							"comment": "https://yaml.org/spec/1.2.2/#rule-c-secondary-tag-handle",
+							"match": "\\G(!)[0-9A-Za-z-]++(!)",
+							"captures": {
+								"1": { "name": "punctuation.definition.tag.named.yaml" },
+								"2": { "name": "punctuation.definition.tag.named.yaml" }
+							}
+						},
+						{
+							"comment": "https://yaml.org/spec/1.2.2/#rule-c-primary-tag-handle",
+							"match": "\\G!",
+							"name": "punctuation.definition.tag.primary.yaml"
+						},
+						{
+							"match": "%[0-9a-fA-F]{2}",
+							"name": "constant.character.escape.unicode.8-bit.yaml"
+						},
+						{
+							"match": "%[^\r\n\t ]{,2}",
+							"name": "invalid.illegal.constant.character.escape.unicode.8-bit.yaml"
+						},
+						{ "include": "#non-printable" },
+						{
+							"match": "[^\r\n\t a-zA-Z0-9-#;/?:@&=+$_.~*'()%]++",
+							"name": "invalid.illegal.unrecognized.yaml"
+						}
+					]
+				}
+			]
+		},
+		"alias": {
+			"match": "(\\*)([\\x85[^ ,{}\\[\\]\\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]*+)",
+			"captures": {
+				"0": { "name": "keyword.control.flow.alias.yaml" },
+				"1": { "name": "punctuation.definition.alias.yaml" },
+				"2": { "name": "variable.other.alias.yaml" }
+			}
+		},
+		"anchor-property": {
+			"begin": "(&)([\\x85[^ ,{}\\[\\]\\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]*)",
+			"while": "\\G",
+			"beginCaptures": {
+				"0": { "name": "keyword.control.flow.anchor.yaml" },
+				"1": { "name": "punctuation.definition.anchor.yaml" },
+				"2": { "name": "variable.other.anchor.yaml" }
+			},
+			"name": "meta.anchor.yaml",
+			"patterns": [
+				{ "include": "#indent" },
+				{ "include": "#nodes" }
+			]
+		},
+		"byte-order-mark": {
+			"comment": "﻿",
+			"match": "\\G\\x{FEFF}+",
+			"name": "byte-order-mark.yaml"
+		},
+		"presentation-detail": {
+			"patterns": [
+				{
+					"match": "[ \t]++",
+					"name": "punctuation.whitespace.separator.yaml"
+				},
+				{ "include": "#non-printable" },
 				{ "include": "#comment" },
-				{ "include": "#property" }
+				{ "include": "#unknown" }
 			]
+		},
+		"non-printable": {
+			"//": [
+				"To ensure readability, YAML streams use only the printable subset of the Unicode character set",
+				"The allowed character range explicitly excludes",
+				"The C0 control block x00-x1F (except for TAB x09, LF x0A and CR x0D which are allowed)",
+				"DEL x7F",
+				"The C1 control block x80-x9F (except for NEL x85 which is allowed)",
+				"The surrogate block xD800-xDFFF",
+				"xFFFE and xFFFF"
+			],
+			"//match": "[\\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}&&[^\t\n\r\\x85]]+",
+			"//": [
+				"c-printable ::=",
+				"                    # 8 bit",
+				"x09                  # Tab (\t)",
+				"x0A                  # Line feed (LF \n)",
+				"x0D                  # Carriage Return (CR \r)",
+				"[x20-x7E]            # Printable ASCII",
+				"                    # 16 bit",
+				"x85                  # Next Line (NEL)",
+				"[xA0-xD7FF]          # Basic Multilingual Plane (BMP)",
+				"[xE000-xFFFD]        # Additional Unicode Areas",
+				"[x010000-x10FFFF]   # 32 bit"
+			],
+			"match": "[^\t\n\r -~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]++",
+			"name": "invalid.illegal.non-printable.yaml",
+			"//": {
+				"c-printable": "[\t\n\r -~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]",
+				"nb-char": "[\t -~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]",
+				"ns-char": "[!-~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]",
+				"ns-char_i": "[\\x85[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]"
+			},
+			"//": {
+				"85": "",
+				"A0": " ",
+				"D7FF": "퟿",
+				"E000": "",
+				"FFFD": "�",
+				"FEFF": "﻿",
+				"FFFF": "￿",
+				"10000": "𐀀",
+				"10FFFF": "􏿿"
+			}
+		},
+		"comment": {
+			"comment": "Comments must be separated from other tokens by white space characters. `space`, `tab`, `newline` or `carriage-return`",
+			"begin": "(?<= |\t|^)#",
+			"end": "\r|\n",
+			"captures": { "0": { "name": "punctuation.definition.comment.yaml" } },
+			"name": "comment.line.number-sign.yaml",
+			"patterns": [ { "include": "#non-printable" } ]
+		},
+		"unknown": {
+			"match": ".[[^,:\\[\\]{}\"#]&&!-~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]*+",
+			"name": "invalid.illegal.unrecognized.yaml markup.strikethrough"
 		}
 	}
 }

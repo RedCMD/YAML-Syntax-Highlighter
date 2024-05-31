@@ -1,0 +1,9 @@
+{
+	"$schema": "https://raw.githubusercontent.com/RedCMD/TmLanguage-Syntax-Highlighter/main/vscode.tmLanguage.schema.json",
+	"scopeName": "source.yaml.1.3",
+	"name": "YAML 1.3",
+	"patterns": [ ],
+	"repository": {
+		"directive-YAML": { }
+	}
+}
