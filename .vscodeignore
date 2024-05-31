@@ -1,10 +1,16 @@
-.github/**
-.git/**
-.vscode/**
-.vscode-test/**
-_test/**
+.github
+.git
+.vscode
+.vscode-test
+_test
+node_modules
+src
+out
 
 .gitignore
 .vsixmanifest
 vsc-extension-quickstart.md
 Official_YAML_Logo.svg
+tsconfig.json
+
+syntaxes/yaml_.tmLanguage.json

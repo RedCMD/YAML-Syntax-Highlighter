@@ -1,5 +1,11 @@
 .git
 _test
+src
+out
+node_modules
 
 *.vsix
 *.vsixmanifest
+
+tsconfig.json
+package-lock.json
