@@ -36,7 +36,19 @@
 					".cff",
 					".yaml-tmlanguage",
 					".yaml-tmpreferences",
-					".yaml-tmtheme"
+					".yaml-tmtheme",
+					".clang-format",
+					".eslintrc",
+					".yamllint",
+					".yaml.erb",
+					".yml.erb",
+					".sls",
+					".stylelintrc",
+					".sublime-syntax",
+					".Boxfile",
+					".Kptfile",
+					".Krmfile",
+					".ksy"
 				],
 				"firstLine": "^#cloud-config",
 				"configuration": "./language-configuration.json"
