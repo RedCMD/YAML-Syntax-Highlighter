@@ -99,13 +99,15 @@
 				"editor.insertSpaces": true,
 				"editor.tabSize": 2,
 				"editor.autoIndent": "advanced",
-				"diffEditor.ignoreTrimWhitespace": false
+				"diffEditor.ignoreTrimWhitespace": false,
+				"files.trimTrailingWhitespace": false
 			},
 			"[dockercompose]": {
 				"editor.maxTokenizationLineLength": 100000,
 				"editor.insertSpaces": true,
 				"editor.tabSize": 2,
-				"editor.autoIndent": "advanced"
+				"editor.autoIndent": "advanced",
+				"files.trimTrailingWhitespace": false
 			}
 		}
 	}
