@@ -3,7 +3,6 @@
 ## Features
 
 - Syntax highlighting
-- Snippets
 - Bracket matching
 - YAML version 1.0 through 1.2.2
 

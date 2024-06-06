@@ -17,8 +17,7 @@
 	},
 	"homepage": "https://marketplace.visualstudio.com/items?itemName=RedCMD.yaml-syntax",
 	"categories": [
-		"Programming Languages",
-		"Snippets"
+		"Programming Languages"
 	],
 	"contributes": {
 		"languages": [
@@ -100,12 +99,6 @@
 				"language": "dockercompose",
 				"scopeName": "source.yaml",
 				"path": "./syntaxes/yaml.tmLanguage.json"
-			}
-		],
-		"snippets": [
-			{
-				"language": "yaml",
-				"path": "./snippets/yaml.code-snippets"
 			}
 		],
 		"configurationDefaults": {
