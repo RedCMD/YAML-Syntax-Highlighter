@@ -590,15 +590,7 @@
 				}
 			]
 		},
-		"flow-node-in": {
-			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-seq-entry (FLOW-IN)",
-			"patterns": [
-				{ "include": "#flow-map-key" },
-				{ "include": "#flow-map-value" },
-				{ "include": "#flow-node-out" }
-			]
-		},
-		"flow-node-out": {
+		"flow-node": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-seq-entry (FLOW-IN)",
 			"patterns": [
 				{ "include": "#flow-mapping" },
@@ -630,7 +622,10 @@
 						{ "include": "#presentation-detail" }
 					]
 				},
-				{ "include": "#flow-node-in" }
+				{ "include": "#flow-map-key-mapping" },
+				{ "include": "#flow-map-value-yaml" },
+				{ "include": "#flow-map-value-json" },
+				{ "include": "#flow-node" }
 			]
 		},
 		"flow-sequence": {
@@ -654,39 +649,107 @@
 						{ "include": "#presentation-detail" }
 					]
 				},
-				{ "include": "#flow-node-in" }
+				{ "include": "#flow-map-key-sequence" },
+				{ "include": "#flow-map-value-yaml" },
+				{ "include": "#flow-map-value-json" },
+				{ "include": "#flow-node" }
 			]
 		},
-		"flow-map-key": {
+		"flow-map-key-mapping": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-entry (FLOW-IN)",
 			"patterns": [
 				{
-					"begin": "\\?(?=[\r\n\t ,\\]}])",
-					"end": "(?=[,\\]}])",
+					"begin": "\\?(?=[\r\n\t ,\\[\\]{}])",
+					"end": "(?=[,\\[\\]{}])",
 					"beginCaptures": { "0": { "name": "punctuation.definition.map.key.yaml" } },
-					"name": "meta.flow.pair.explicit.yaml",
-					"patterns": [ { "include": "#flow-node-in" } ]
+					"name": "meta.flow.map.explicit.yaml",
+					"patterns": [
+						{ "include": "#flow-map-key-mapping" },
+						{ "include": "#flow-map-value-yaml" },
+						{ "include": "#flow-map-value-json" },
+						{ "include": "#flow-node" }
+					]
 				},
 				{
 					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-implicit-entry (FLOW-IN)",
-					"begin": "(?=(?>(?#Double Quote)\"(?>[^\\\\\"]++|\\\\.)*+\"|(?#Single Quote)'(?>[^']++|'')*+'|(?#Plain)(?>[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ,\\[\\]{}]))(?>[^:#]++|:(?![\r\n\t ,\\[\\]{}])|(?<! |\t)#++)*+)(?#Map Value)[ \t]*+:[\r\n\t ,\\[\\]{}])",
-					"end": "(?=:)",
-					"name": "meta.flow.map.yaml",
+					"begin": "(?=(?>[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ,\\[\\]{}])))",
+					"end": "(?=[,\\[\\]{}])",
+					"name": "meta.flow.map.implicit.yaml",
+					"patterns": [
+						{ "include": "#flow-key-plain" },
+						{ "include": "#flow-map-value-yaml" },
+						{ "include": "#presentation-detail" }
+					]
+				},
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-implicit-entry (FLOW-IN)",
+					"begin": "(?=\"|')",
+					"end": "(?=[,\\[\\]{}])",
+					"name": "meta.flow.map.implicit.yaml",
 					"patterns": [
 						{ "include": "#key-double" },
 						{ "include": "#key-single" },
-						{ "include": "#flow-key-plain" }
+						{ "include": "#flow-map-value-json" },
+						{ "include": "#presentation-detail" }
 					]
 				}
 			]
 		},
-		"flow-map-value": {
+		"flow-map-key-sequence": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-entry (FLOW-IN)",
+			"patterns": [
+				{
+					"begin": "\\?(?=[\r\n\t ,\\[\\]{}])",
+					"end": "(?=[,\\[\\]{}])",
+					"beginCaptures": { "0": { "name": "punctuation.definition.map.key.yaml" } },
+					"name": "meta.flow.map.explicit.yaml",
+					"patterns": [
+						{ "include": "#flow-map-key-mapping" },
+						{ "include": "#flow-map-value-yaml" },
+						{ "include": "#flow-map-value-json" },
+						{ "include": "#flow-node" }
+					]
+				},
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-implicit-entry (FLOW-IN)",
+					"begin": "(?<=^|[ \t,\\[{])(?=(?>[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ,\\[\\]{}]))(?>[^:#,\\[\\]{}]++|:(?![\r\n\t ,\\[\\]{}])|(?<! |\t)#++)*+:[\r\n\t ,\\[\\]{}])",
+					"end": "(?=[,\\[\\]{}])",
+					"name": "meta.flow.map.implicit.yaml",
+					"patterns": [
+						{ "include": "#flow-key-plain" },
+						{ "include": "#flow-map-value-yaml" },
+						{ "include": "#presentation-detail" }
+					]
+				},
+				{
+					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-implicit-entry (FLOW-IN)",
+					"begin": "(?=(?>\"(?>[^\\\\\"]++|\\\\.)*+\"|'(?>[^']++|'')*+')[ \t]*+:)",
+					"end": "(?=[,\\[\\]{}])",
+					"name": "meta.flow.map.implicit.yaml",
+					"patterns": [
+						{ "include": "#key-double" },
+						{ "include": "#key-single" },
+						{ "include": "#flow-map-value-json" },
+						{ "include": "#presentation-detail" }
+					]
+				}
+			]
+		},
+		"flow-map-value-yaml": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-flow-map-separate-value (FLOW-IN)",
 			"begin": ":(?=[\r\n\t ,\\]}])",
 			"end": "(?=[,\\]}])",
 			"beginCaptures": { "0": { "name": "punctuation.separator.map.value.yaml" } },
 			"name": "meta.flow.pair.value.yaml",
-			"patterns": [ { "include": "#flow-node-out" } ]
+			"patterns": [ { "include": "#flow-node" } ]
+		},
+		"flow-map-value-json": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-flow-map-separate-value (FLOW-IN)",
+			"begin": "(?<=$|[\"'\\]}][ \t]*+):",
+			"end": "(?=[,\\]}])",
+			"beginCaptures": { "0": { "name": "punctuation.separator.map.value.yaml" } },
+			"name": "meta.flow.pair.value.yaml",
+			"patterns": [ { "include": "#flow-node" } ]
 		},
 		"flow-plain-in": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-multi-line (FLOW-IN)",
@@ -827,9 +890,9 @@
 		},
 		"flow-key-plain": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-s-implicit-yaml-key (FLOW-KEY)",
-			"begin": "\\G",
-			"end": "(?=[ \t]*+:[\r\n\t ,\\[\\]{}])",
-			"name": "meta.flow.pair.key.yaml string.unquoted.other.in.yaml entity.name.tag.yaml",
+			"begin": "\\G(?![\r\n\t #])",
+			"end": "(?=[ \t]*+(?>:[\r\n\t ,\\[\\]{}]|[,\\[\\]{}])|[ \t]++#)",
+			"name": "meta.flow.map.key.yaml string.unquoted.other.in.yaml entity.name.tag.yaml",
 			"patterns": [ { "include": "#flow-type-plain-in" } ]
 		},
 		"key-double": {
