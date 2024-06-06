@@ -282,7 +282,7 @@
 		"block-map-value": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-implicit-value",
 			"begin": "(:)(?=[\r\n\t ])",
-			"while": "\\G(?![?:0-9A-Za-z$()+./;<=\\\\^_~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]])",
+			"while": "\\G(?![?:\"'0-9A-Za-z$()+./;<=\\\\^_~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]])",
 			"beginCaptures": { "1": { "name": "punctuation.separator.map.value.yaml" } },
 			"name": "meta.map.value.yaml",
 			"patterns": [ { "include": "#block-node" } ]
