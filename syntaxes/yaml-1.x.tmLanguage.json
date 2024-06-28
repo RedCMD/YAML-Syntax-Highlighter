@@ -1,7 +1,7 @@
 {
 	"$schema": "https://raw.githubusercontent.com/RedCMD/TmLanguage-Syntax-Highlighter/main/vscode.tmLanguage.schema.json",
-	"scopeName": "source.yaml.1.1",
-	"name": "YAML 1.1",
+	"scopeName": "source.yaml.1.x",
+	"name": "YAML 1.x",
 	"patterns": [
 		{ "include": "#stream" }
 	],
@@ -35,19 +35,20 @@
 		},
 		"directive-YAML": {
 			"comment": "https://yaml.org/spec/1.2.2/#681-yaml-directives",
-			"begin": "(?=%YAML[ \t]+1\\.1(?=[\r\n\t ]))",
-			"end": "\\G(?=%(?!YAML[ \t]+1\\.1))",
-			"name": "meta.1.1.yaml",
+			"begin": "(?=%YAML(?>[\t ]++|:)[0-9]++\\.[0-9]++(?=[\r\n\t ]))",
+			"end": "\\G(?=(?>\\.{3}|---)[\r\n\t ])",
+			"name": "meta.1.x.yaml",
 			"patterns": [
 				{
 					"comment": "https://yaml.org/spec/1.2.2/#681-yaml-directives",
-					"begin": "\\G(%)(YAML)([ \t]+)(1\\.1)",
-					"while": "\\G(?!---[\r\n\t ])",
+					"begin": "\\G(%)(YAML)([\t ]+|:)((?>1|([0-9]++))\\.[0-9]++)",
+					"end": "\\G(?=---[\r\n\t ])",
 					"beginCaptures": {
 						"1": { "name": "punctuation.definition.directive.begin.yaml" },
 						"2": { "name": "keyword.other.directive.yaml.yaml" },
 						"3": { "name": "punctuation.whitespace.separator.yaml" },
-						"4": { "name": "constant.numeric.yaml-version.yaml" }
+						"4": { "name": "constant.numeric.yaml-version.yaml" },
+						"5": { "name": "invalid.illegal.version.yaml" }
 					},
 					"name": "meta.directives.yaml",
 					"patterns": [
@@ -56,15 +57,7 @@
 						{ "include": "#presentation-detail" }
 					]
 				},
-				{
-					"begin": "\\G(?=---[\r\n\t ])",
-					"while": "\\G(?!%)",
-					"patterns": [
-						{ "include": "#document" },
-						{ "include": "#presentation-detail" }
-					]
-				},
-				{ "include": "#presentation-detail" }
+				{ "include": "#document" }
 			]
 		},
 		"directives": {
