@@ -947,43 +947,19 @@
 			]
 		},
 		"tag-property": {
-			"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-tag-property",
+			"comment": "https://yaml.org/spec/1.0/#id2562713",
 			"//": [
 				"!",
 				"!!",
-				"!<>",
 				"!...",
 				"!!...",
-				"!<...>",
 				"!...!..."
 			],
+			"//": "TODO: Add `^` prefix and correctly validate 1.0 tags",
 			"patterns": [
 				{
 					"match": "!(?=[\\x{2028 2029}\r\n\t ])",
 					"name": "storage.type.tag.non-specific.yaml punctuation.definition.tag.non-specific.yaml"
-				},
-				{
-					"comment": "https://yaml.org/spec/1.2.2/#rule-c-verbatim-tag",
-					"begin": "!<",
-					"end": ">",
-					"beginCaptures": { "0": { "name": "punctuation.definition.tag.begin.yaml" } },
-					"endCaptures": { "0": { "name": "punctuation.definition.tag.end.yaml" } },
-					"name": "storage.type.tag.verbatim.yaml",
-					"patterns": [
-						{
-							"match": "%[0-9a-fA-F]{2}",
-							"name": "constant.character.escape.unicode.8-bit.yaml"
-						},
-						{
-							"match": "%[^\\x{2028 2029}\r\n\t ]{2,0}",
-							"name": "invalid.illegal.constant.character.escape.unicode.8-bit.yaml"
-						},
-						{ "include": "#non-printable" },
-						{
-							"match": "[^\\x{2028 2029}\r\n\t a-zA-Z0-9-#;/?:@&=+$,_.!~*'()\\[\\]%>]++",
-							"name": "invalid.illegal.unrecognized.yaml"
-						}
-					]
 				},
 				{
 					"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-shorthand-tag",
