@@ -1058,7 +1058,7 @@
 						},
 						{ "include": "#non-printable" },
 						{
-							"match": "[^\r\n\t a-zA-Z0-9-#;/?:@&=+$_.~*'()%]++",
+							"match": "[^\r\n\t a-zA-Z0-9-#;/?:@&=+$,_.~*'()\\[\\]%]++",
 							"name": "invalid.illegal.unrecognized.yaml"
 						}
 					]
@@ -1066,7 +1066,7 @@
 			]
 		},
 		"anchor-property": {
-			"match": "(&)([\\x85[^ ,\\[\\]{}\\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)|(&)",
+			"match": "(&)([\\x85[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)|(&)",
 			"captures": {
 				"0": { "name": "keyword.control.flow.anchor.yaml" },
 				"1": { "name": "punctuation.definition.anchor.yaml" },
@@ -1075,7 +1075,7 @@
 			}
 		},
 		"alias": {
-			"begin": "(\\*)([\\x85[^ ,\\[\\]{}\\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)|(\\*)",
+			"begin": "(\\*)([\\x85[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)|(\\*)",
 			"end": "(?=:[\r\n\t ,\\[\\]{}]|[,\\[\\]{}])",
 			"captures": {
 				"0": { "name": "keyword.control.flow.alias.yaml" },
