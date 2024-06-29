@@ -834,7 +834,7 @@
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-esc-char",
 			"patterns": [
 				{
-					"match": "\\\\[\r\n\t0abtnvfre \"/\\\\N_LP]",
+					"match": "\\\\[\r\n\t0abtnvfre \"\\\\N_LP]",
 					"name": "constant.character.escape.yaml"
 				},
 				{
