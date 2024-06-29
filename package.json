@@ -76,7 +76,8 @@
 				"unbalancedBracketScopes": [
 					"invalid.illegal",
 					"meta.scalar.yaml",
-					"storage.type.tag.shorthand.yaml"
+					"storage.type.tag.shorthand.yaml",
+					"keyword.control.flow"
 				]
 			},
 			{
