@@ -2,6 +2,7 @@
 	"$schema": "https://raw.githubusercontent.com/RedCMD/TmLanguage-Syntax-Highlighter/main/vscode.tmLanguage.schema.json",
 	"scopeName": "source.yaml.1.2",
 	"name": "YAML 1.2",
+	"comment": "https://yaml.org/spec/1.2.2",
 	"patterns": [
 		{ "include": "#stream" }
 	],
@@ -66,7 +67,6 @@
 				{ "include": "source.yaml.1.2#directive-YAML" },
 				{ "include": "source.yaml.1.1#directive-YAML" },
 				{ "include": "source.yaml.1.0#directive-YAML" },
-				{ "include": "source.yaml.1.x#directive-YAML" },
 				{
 					"begin": "(?=%)",
 					"while": "\\G(?!%|---[\r\n\t ])",

@@ -86,7 +86,6 @@
 				{ "include": "source.yaml.1.2#directive-YAML" },
 				{ "include": "source.yaml.1.1#directive-YAML" },
 				{ "include": "source.yaml.1.0#directive-YAML" },
-				{ "include": "source.yaml.1.x#directive-YAML" },
 				{
 					"begin": "(?=%)",
 					"while": "\\G(?!%|---[\\x{2028 2029}\r\n\t ])",
