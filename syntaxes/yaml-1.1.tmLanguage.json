@@ -1100,8 +1100,22 @@
 		},
 		"byte-order-mark": {
 			"comment": "﻿",
-			"match": "\\G\\x{FEFF}++",
-			"name": "byte-order-mark.yaml"
+			"begin": "\\G",
+			"while": "\\G(?=[\\x{85 2028 2029 FEFF}\r\n\t ])",
+			"patterns": [
+				{
+					"begin": "(?=#)",
+					"while": "\\G",
+					"patterns": [ { "include": "#presentation-detail" } ]
+				},
+				{
+					"begin": "\\G\\x{FEFF}",
+					"while": "\\G",
+					"beginCaptures": { "0": { "name": "byte-order-mark.yaml" } },
+					"patterns": [ { "include": "#presentation-detail" } ]
+				},
+				{ "include": "#presentation-detail" }
+			]
 		},
 		"presentation-detail": {
 			"patterns": [
@@ -1155,14 +1169,14 @@
 		},
 		"comment": {
 			"comment": "Comments must be separated from other tokens by white space characters. `space`, `tab`, `newline` or `carriage-return`. `#(.*)` causes performance issues",
-			"begin": "(?<= |\t|^)#",
-			"end": "[\r\n\\x{85 2028 2029}]",
+			"begin": "(?<=^|[\\x{FEFF 85 2028 2029}\t ])#",
+			"end": "[\\x{85 2028 2029}\r\n]",
 			"captures": { "0": { "name": "punctuation.definition.comment.yaml" } },
 			"name": "comment.line.number-sign.yaml",
 			"patterns": [ { "include": "#non-printable" } ]
 		},
 		"unknown": {
-			"match": ".[[^\"':,\\[\\]{}]&&!-~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]*+",
+			"match": ".[[^#\"':,\\[\\]{}]&&!-~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]*+",
 			"name": "invalid.illegal.unrecognized.yaml markup.strikethrough"
 		}
 	}
