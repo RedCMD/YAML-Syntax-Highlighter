@@ -2,6 +2,18 @@
 	"$schema": "https://raw.githubusercontent.com/RedCMD/TmLanguage-Syntax-Highlighter/main/vscode.tmLanguage.schema.json",
 	"scopeName": "source.yaml.1.0",
 	"name": "YAML 1.0",
+	"comment": "https://yaml.org/spec/1.0/",
+	"//": [
+		"https://github.com/eemeli/yaml/blob/main/docs/10_yaml_syntax.md#changes-from-yaml-10-to-11",
+		"Changes include:",
+		"no %TAG",
+		"^ prefixing",
+		"! & !! switched",
+		"no !<Verbatim>",
+		"no \\\t escape",
+		"\\^ escape",
+		"Directives use :"
+	],
 	"patterns": [
 		{ "include": "#stream" }
 	],
@@ -77,7 +89,7 @@
 				{ "include": "source.yaml.1.x#directive-YAML" },
 				{
 					"begin": "(?=%)",
-					"while": "\\G(?!%|---[\r\n\t ])",
+					"while": "\\G(?!%|---[\\x{2028 2029}\r\n\t ])",
 					"name": "meta.directives.yaml",
 					"patterns": [
 						{
@@ -98,7 +110,7 @@
 								{
 									"comment": "technically the beginning should only validate against a valid uri scheme [A-Za-z][A-Za-z0-9.+-]*",
 									"begin": "\\G[\t ]++(?!#)",
-									"end": "(?=[\r\n\t ])",
+									"end": "(?=[\\x{2028 2029}\r\n\t ])",
 									"beginCaptures": { "0": { "name": "punctuation.whitespace.separator.yaml" } },
 									"contentName": "support.type.tag-prefix.yaml",
 									"patterns": [
@@ -107,7 +119,7 @@
 											"name": "constant.character.escape.unicode.8-bit.yaml"
 										},
 										{
-											"match": "%[^\r\n\t ]{2,0}",
+											"match": "%[^\\x{2028 2029}\r\n\t ]{2,0}",
 											"name": "invalid.illegal.constant.character.escape.unicode.8-bit.yaml"
 										},
 										{
@@ -116,7 +128,7 @@
 										},
 										{ "include": "#non-printable" },
 										{
-											"match": "[^\r\n\t a-zA-Z0-9-#;/?:@&=+$,_.!~*'()\\[\\]]++",
+											"match": "[^\\x{2028 2029}\r\n\t a-zA-Z0-9-#;/?:@&=+$,_.!~*'()\\[\\]]++",
 											"name": "invalid.illegal.unrecognized.yaml"
 										}
 									]
@@ -126,7 +138,7 @@
 						},
 						{
 							"comment": "https://yaml.org/spec/1.2.2/#rule-ns-reserved-directive",
-							"begin": "(%)([\\x85[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
+							"begin": "(%)([\\x{85}[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
 							"end": "$",
 							"beginCaptures": {
 								"1": { "name": "punctuation.definition.directive.begin.yaml" },
@@ -134,14 +146,14 @@
 							},
 							"patterns": [
 								{
-									"match": "\\G([\t ]++)([\\x85[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
+									"match": "\\G([\t ]++)([\\x{85}[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
 									"captures": {
 										"1": { "name": "punctuation.whitespace.separator.yaml" },
 										"2": { "name": "string.unquoted.directive-name.yaml" }
 									}
 								},
 								{
-									"match": "([\t ]++)([\\x85[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
+									"match": "([\t ]++)([\\x{85}[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
 									"captures": {
 										"1": { "name": "punctuation.whitespace.separator.yaml" },
 										"2": { "name": "string.unquoted.directive-parameter.yaml" }
@@ -151,7 +163,7 @@
 							]
 						},
 						{
-							"match": "\\G\\.{3}(?=[\r\n\t ])",
+							"match": "\\G\\.{3}(?=[\\x{2028 2029}\r\n\t ])",
 							"name": "invalid.illegal.entity.other.document.end.yaml"
 						},
 						{ "include": "#presentation-detail" }
@@ -162,7 +174,7 @@
 		"directive-invalid": {
 			"patterns": [
 				{
-					"match": "\\G\\.{3}(?=[\r\n\t ])",
+					"match": "\\G\\.{3}(?=[\\x{2028 2029}\r\n\t ])",
 					"name": "invalid.illegal.entity.other.document.end.yaml"
 				},
 				{
@@ -190,14 +202,14 @@
 			"comment": "https://yaml.org/spec/1.2.2/#91-documents",
 			"patterns": [
 				{
-					"begin": "---(?=[\r\n\t ])",
-					"while": "\\G(?!(?>\\.{3}|---)[\r\n\t ])",
+					"begin": "---(?=[\\x{2028 2029}\r\n\t ])",
+					"while": "\\G(?!(?>\\.{3}|---)[\\x{2028 2029}\r\n\t ])",
 					"beginCaptures": { "0": { "name": "entity.other.document.begin.yaml" } },
 					"name": "meta.document.yaml",
 					"patterns": [ { "include": "#block-node" } ]
 				},
 				{
-					"begin": "(?=\\.{3}[\r\n\t ])",
+					"begin": "(?=\\.{3}[\\x{2028 2029}\r\n\t ])",
 					"while": "\\G(?=[\t \\x{FEFF}]*+(?>#|$))",
 					"patterns": [
 						{
@@ -212,7 +224,7 @@
 				},
 				{
 					"begin": "\\G(?!%|[\t \\x{FEFF}]*+(?>#|$))",
-					"while": "\\G(?!(?>\\.{3}|---)[\r\n\t ])",
+					"while": "\\G(?!(?>\\.{3}|---)[\\x{2028 2029}\r\n\t ])",
 					"name": "meta.document.yaml",
 					"patterns": [ { "include": "#block-node" } ]
 				}
@@ -236,8 +248,8 @@
 		},
 		"block-mapping": {
 			"//": "The check for plain keys is expensive",
-			"begin": "(?=((?<=[-?]) )?+)(?<![^\t ][\t ]*+:|---)\\G( *+)([\t ]*+)((?>[!&*][^\r\n\t ]*+[\t ]++)*+)(?=(?>(?#Double Quote)\"(?>[^\\\\\"]++|\\\\.)*+\"|(?#Single Quote)'(?>[^']++|'')*+'|(?#Plain)(?>[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ]))(?>[^:#]++|:(?![\r\n\t ])|(?<! |\t)#++)*+)?+(?#Map Value)[\t ]*+:[\r\n\t ]|(?#Explicit)\\?[\r\n\t ])|(?#Flow-Map/Seq)(?<=]|})([\t ]*+)(?=:)",
-			"while": "\\G(?>(\\1\\2)((?>[!&*][^\r\n\t ]*+[\t ]++)*+)((?>\t[\t ]*+)?+[^\r\n\t ?:\\-#!&*\"'\\[\\]{}0-9A-Za-z$()+./;<=\\\\^_~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}])?+|( *+)([\t ]*+[^\r\n#])?+)",
+			"begin": "(?=((?<=[-?]) )?+)(?<![^\t ][\t ]*+:|---)\\G( *+)([\t ]*+)((?>[!&*][^\\x{2028 2029}\r\n\t ]*+[\t ]++)*+)(?=(?>(?#Double Quote)\"(?>[^\\\\\"]++|\\\\.)*+\"|(?#Single Quote)'(?>[^']++|'')*+'|(?#Plain)(?>[\\x{85}[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\\x{2028 2029}\r\n\t ]))(?>[^:#]++|:(?![\\x{2028 2029}\r\n\t ])|(?<! |\t)#++)*+)?+(?#Map Value)[\t ]*+:[\\x{2028 2029}\r\n\t ]|(?#Explicit)\\?[\\x{2028 2029}\r\n\t ])|(?#Flow-Map/Seq)(?<=]|})([\t ]*+)(?=:)",
+			"while": "\\G(?>(\\1\\2)((?>[!&*][^\\x{2028 2029}\r\n\t ]*+[\t ]++)*+)((?>\t[\t ]*+)?+[^\\x{2028 2029}\r\n\t ?:\\-#!&*\"'\\[\\]{}0-9A-Za-z$()+./;<=\\\\^_~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}])?+|( *+)([\t ]*+[^\r\n#])?+)",
 			"beginCaptures": {
 				"2": { "name": "punctuation.whitespace.indentation.yaml" },
 				"3": { "name": "punctuation.whitespace.separator.yaml" },
@@ -320,8 +332,8 @@
 		},
 		"block-sequence": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-l+block-sequence",
-			"begin": "(?=((?<=[-?:]) )?+)(?<![^\t ][\t ]*+:|---)\\G( *+)(-)(?=[\r\n\t ])",
-			"while": "\\G(?>(\\1\\2)(?!-[\r\n\t ])((?>\t[\t ]*+)?+[^\r\n\t #\\[\\]{}])?+|(?!\\1\\2)( *+)([\t ]*+[^\r\n#])?+)",
+			"begin": "(?=((?<=[-?:]) )?+)(?<![^\t ][\t ]*+:|---)\\G( *+)(-)(?=[\\x{2028 2029}\r\n\t ])",
+			"while": "\\G(?>(\\1\\2)(?!-[\\x{2028 2029}\r\n\t ])((?>\t[\t ]*+)?+[^\\x{2028 2029}\r\n\t #\\[\\]{}])?+|(?!\\1\\2)( *+)([\t ]*+[^\r\n#])?+)",
 			"beginCaptures": {
 				"2": { "name": "punctuation.whitespace.indentation.yaml" },
 				"3": { "name": "punctuation.definition.block.sequence.item.yaml" }
@@ -337,8 +349,8 @@
 		},
 		"block-map-explicit": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-explicit-key",
-			"begin": "(?=((?<=[-?]) )?+)\\G( *+)(\\?)(?=[\r\n\t ])",
-			"while": "\\G(?>(\\1\\2)(?![?:0-9A-Za-z$()+./;<=\\\\^_~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]])((?>\t[\t ]*+)?+[^\r\n\t #\\-\\[\\]{}])?+|(?!\\1\\2)( *+)([\t ]*+[^\r\n#])?+)",
+			"begin": "(?=((?<=[-?]) )?+)\\G( *+)(\\?)(?=[\\x{2028 2029}\r\n\t ])",
+			"while": "\\G(?>(\\1\\2)(?![?:0-9A-Za-z$()+./;<=\\\\^_~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]])((?>\t[\t ]*+)?+[^\\x{2028 2029}\r\n\t #\\-\\[\\]{}])?+|(?!\\1\\2)( *+)([\t ]*+[^\r\n#])?+)",
 			"beginCaptures": {
 				"2": { "name": "punctuation.whitespace.indentation.yaml" },
 				"3": { "name": "punctuation.definition.map.key.yaml" },
@@ -361,16 +373,16 @@
 		},
 		"block-map-value": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-implicit-value",
-			"begin": "(:)(?=[\r\n\t ])",
-			"while": "\\G(?![?:!\"'0-9A-Za-z$()+./;<=\\\\^_~\\[{\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]|-[^\r\n\t ])",
+			"begin": "(:)(?=[\\x{2028 2029}\r\n\t ])",
+			"while": "\\G(?![?:!\"'0-9A-Za-z$()+./;<=\\\\^_~\\[{\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]|-[^\\x{2028 2029}\r\n\t ])",
 			"beginCaptures": { "1": { "name": "punctuation.separator.map.value.yaml" } },
 			"name": "meta.map.value.yaml",
 			"patterns": [ { "include": "#block-node" } ]
 		},
 		"block-key-plain": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-one-line (BLOCK-KEY)",
-			"begin": "\\G(?=[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ]))",
-			"end": "(?=[\t ]*+:[\r\n\t ]|(?>[\t ]++|\\G)#)",
+			"begin": "\\G(?=[\\x{85}[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\\x{2028 2029}\r\n\t ]))",
+			"end": "(?=[\t ]*+:[\\x{2028 2029}\r\n\t ]|(?>[\t ]++|\\G)#)",
 			"name": "meta.map.key.yaml string.unquoted.other.yaml entity.name.tag.yaml",
 			"patterns": [
 				{ "include": "#tag-implicit-plain-out" },
@@ -498,7 +510,7 @@
 		},
 		"block-plain-out": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-multi-line (FLOW-OUT)",
-			"begin": "(?=[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ]))",
+			"begin": "(?=[\\x{85}[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\\x{2028 2029}\r\n\t ]))",
 			"while": "\\G",
 			"patterns": [
 				{
@@ -508,7 +520,7 @@
 					"patterns": [
 						{ "include": "#tag-implicit-plain-out" },
 						{
-							"match": ":(?=[\r\n\t ])",
+							"match": ":(?=[\\x{2028 2029}\r\n\t ])",
 							"name": "invalid.illegal.multiline-key.yaml"
 						},
 						{
@@ -553,8 +565,8 @@
 			"patterns": [
 				{
 					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-s-flow-map-entries",
-					"begin": "(?<={)\\G(?=[\r\n\t ,#])|,",
-					"end": "(?=[^\r\n\t ,#])",
+					"begin": "(?<={)\\G(?=[\\x{2028 2029}\r\n\t ,#])|,",
+					"end": "(?=[^\\x{2028 2029}\r\n\t ,#])",
 					"beginCaptures": { "0": { "name": "punctuation.separator.mapping.yaml" } },
 					"patterns": [
 						{
@@ -580,8 +592,8 @@
 			"patterns": [
 				{
 					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-s-flow-seq-entries",
-					"begin": "(?<=\\[)\\G(?=[\r\n\t ,#])|,",
-					"end": "(?=[^\r\n\t ,#])",
+					"begin": "(?<=\\[)\\G(?=[\\x{2028 2029}\r\n\t ,#])|,",
+					"end": "(?=[^\\x{2028 2029}\r\n\t ,#])",
 					"beginCaptures": { "0": { "name": "punctuation.separator.sequence.yaml" } },
 					"patterns": [
 						{
@@ -601,7 +613,7 @@
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-entry (FLOW-IN)",
 			"patterns": [
 				{
-					"begin": "\\?(?=[\r\n\t ,\\[\\]{}])",
+					"begin": "\\?(?=[\\x{2028 2029}\r\n\t ,\\[\\]{}])",
 					"end": "(?=[,\\[\\]{}])",
 					"beginCaptures": { "0": { "name": "punctuation.definition.map.key.yaml" } },
 					"name": "meta.flow.map.explicit.yaml",
@@ -614,7 +626,7 @@
 				},
 				{
 					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-implicit-entry (FLOW-IN)",
-					"begin": "(?=(?>[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ,\\[\\]{}])))",
+					"begin": "(?=(?>[\\x{85}[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\\x{2028 2029}\r\n\t ,\\[\\]{}])))",
 					"end": "(?=[,\\[\\]{}])",
 					"name": "meta.flow.map.implicit.yaml",
 					"patterns": [
@@ -645,7 +657,7 @@
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-entry (FLOW-IN)",
 			"patterns": [
 				{
-					"begin": "\\?(?=[\r\n\t ,\\[\\]{}])",
+					"begin": "\\?(?=[\\x{2028 2029}\r\n\t ,\\[\\]{}])",
 					"end": "(?=[,\\[\\]{}])",
 					"beginCaptures": { "0": { "name": "punctuation.definition.map.key.yaml" } },
 					"name": "meta.flow.map.explicit.yaml",
@@ -658,7 +670,7 @@
 				},
 				{
 					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-implicit-entry (FLOW-IN)",
-					"begin": "(?<=[\t ,\\[{]|^)(?=(?>[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ,\\[\\]{}]))(?>[^:#,\\[\\]{}]++|:(?![\r\n\t ,\\[\\]{}])|(?<! |\t)#++)*+:[\r\n\t ,\\[\\]{}])",
+					"begin": "(?<=[\t ,\\[{]|^)(?=(?>[\\x{85}[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\\x{2028 2029}\r\n\t ,\\[\\]{}]))(?>[^:#,\\[\\]{}]++|:(?![\\x{2028 2029}\r\n\t ,\\[\\]{}])|(?<! |\t)#++)*+:[\\x{2028 2029}\r\n\t ,\\[\\]{}])",
 					"end": "(?=[,\\[\\]{}])",
 					"name": "meta.flow.map.implicit.yaml",
 					"patterns": [
@@ -687,7 +699,7 @@
 		},
 		"flow-map-value-yaml": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-flow-map-separate-value (FLOW-IN)",
-			"begin": ":(?=[\r\n\t ,\\[\\]{}])",
+			"begin": ":(?=[\\x{2028 2029}\r\n\t ,\\[\\]{}])",
 			"end": "(?=[,\\]}])",
 			"beginCaptures": { "0": { "name": "punctuation.separator.map.value.yaml" } },
 			"name": "meta.flow.pair.value.yaml",
@@ -703,7 +715,7 @@
 		},
 		"flow-plain": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-multi-line (FLOW-IN)",
-			"begin": "(?=[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ,\\[\\]{}]))",
+			"begin": "(?=[\\x{85}[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
 			"end": "(?=(?>[\t ]++|\\G)#|[\t ]*+[,\\[\\]{}])",
 			"name": "string.unquoted.other.in.yaml",
 			"patterns": [
@@ -717,7 +729,7 @@
 					"name": "punctuation.whitespace.separator.yaml"
 				},
 				{
-					"match": ":(?=[\r\n\t ,\\[\\]{}])",
+					"match": ":(?=[\\x{2028 2029}\r\n\t ,\\[\\]{}])",
 					"name": "invalid.illegal.multiline-key.yaml"
 				},
 				{ "include": "#non-printable" }
@@ -725,8 +737,8 @@
 		},
 		"flow-key-plain-out": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-one-line (FLOW-OUT)",
-			"begin": "(?=[\\x85[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ]))",
-			"end": "(?=[\t ]*+:[\r\n\t ]|[\t ]++#)",
+			"begin": "(?=[\\x{85}[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\\x{2028 2029}\r\n\t ]))",
+			"end": "(?=[\t ]*+:[\\x{2028 2029}\r\n\t ]|[\t ]++#)",
 			"name": "meta.map.key.yaml string.unquoted.other.yaml entity.name.tag.yaml",
 			"patterns": [
 				{ "include": "#tag-implicit-plain-out" },
@@ -743,8 +755,8 @@
 		},
 		"flow-key-plain-in": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-s-implicit-yaml-key (FLOW-KEY)",
-			"begin": "\\G(?![\r\n\t #])",
-			"end": "(?=[\t ]*+(?>:[\r\n\t ,\\[\\]{}]|[,\\[\\]{}])|[\t ]++#)",
+			"begin": "\\G(?![\\x{2028 2029}\r\n\t #])",
+			"end": "(?=[\t ]*+(?>:[\\x{2028 2029}\r\n\t ,\\[\\]{}]|[,\\[\\]{}])|[\t ]++#)",
 			"name": "meta.flow.map.key.yaml string.unquoted.other.in.yaml entity.name.tag.yaml",
 			"patterns": [ { "include": "#tag-implicit-plain-in" } ]
 		},
@@ -798,7 +810,7 @@
 					"name": "punctuation.whitespace.separator.yaml"
 				},
 				{
-					"match": "[^\r\n\t -\\x{10FFFF}]++",
+					"match": "[^\\x{2028 2029}\r\n\t -\\x{10FFFF}]++",
 					"name": "invalid.illegal.character.yaml"
 				},
 				{ "include": "#double-escape" }
@@ -821,7 +833,7 @@
 					"name": "punctuation.whitespace.separator.yaml"
 				},
 				{
-					"match": "[^\r\n\t -\\x{10FFFF}]++",
+					"match": "[^\\x{2028 2029}\r\n\t -\\x{10FFFF}]++",
 					"name": "invalid.illegal.character.yaml"
 				},
 				{
@@ -834,7 +846,7 @@
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-esc-char",
 			"patterns": [
 				{
-					"match": "\\\\[\r\n\t0abtnvfre \"/\\\\N_LP]",
+					"match": "\\\\[\\x{2028 2029}\r\n\t0abtnvfre \"\\\\N_LP]",
 					"name": "constant.character.escape.yaml"
 				},
 				{
@@ -856,76 +868,132 @@
 			]
 		},
 		"tag-implicit-plain-in": {
-			"comment": "https://yaml.org/spec/1.2.2/#103-core-schema",
+			"comment": "https://yaml.org/type/index.html",
 			"patterns": [
 				{
-					"match": "\\G(?>null|Null|NULL|~)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"match": "\\G(?>null|Null|NULL|~)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
 					"name": "constant.language.null.yaml"
 				},
 				{
-					"match": "\\G(?>true|True|TRUE|false|False|FALSE)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"match": "\\G(?>true|True|TRUE|false|False|FALSE|y|Y|yes|Yes|YES|n|N|no|No|NO|on|On|ON|off|Off|OFF)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
 					"name": "constant.language.boolean.yaml"
 				},
 				{
-					"match": "\\G[+-]?+[0-9]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"match": "\\G[-+]?+(0|[1-9][0-9_]*+)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
 					"name": "constant.numeric.integer.decimal.yaml"
 				},
 				{
-					"match": "\\G0o[0-7]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"match": "\\G[-+]?+0b[0-1_]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.integer.binary.yaml"
+				},
+				{
+					"match": "\\G[-+]?0[0-7_]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
 					"name": "constant.numeric.integer.octal.yaml"
 				},
 				{
-					"match": "\\G0x[0-9a-fA-F]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"match": "\\G[-+]?+0x[0-9a-fA-F_]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
 					"name": "constant.numeric.integer.hexadecimal.yaml"
 				},
 				{
-					"match": "\\G[+-]?+(?>\\.[0-9]++|[0-9]++(?>\\.[0-9]*+)?+)(?>[eE][+-]?+[0-9]++)?+(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
-					"name": "constant.numeric.float.yaml"
+					"match": "\\G[-+]?+[1-9][0-9_]*+(?>:[0-5]?[0-9])++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.integer.Sexagesimal.yaml"
 				},
 				{
-					"match": "\\G[+-]?+\\.(?>inf|Inf|INF)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"match": "\\G[-+]?+(?>[0-9][0-9_]*+)?+\\.[0-9.]*+(?>[eE][-+][0-9]+)?+(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.float.decimal.yaml"
+				},
+				{
+					"match": "\\G[-+]?+[0-9][0-9_]*+(?>:[0-5]?[0-9])++\\.[0-9_]*+(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.float.Sexagesimal.yaml"
+				},
+				{
+					"match": "\\G[+-]?+\\.(?>inf|Inf|INF)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
 					"name": "constant.numeric.float.inf.yaml"
 				},
 				{
-					"match": "\\G\\.(?>nan|NaN|NAN)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"match": "\\G\\.(?>nan|NaN|NAN)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
 					"name": "constant.numeric.float.nan.yaml"
+				},
+				{
+					"match": "\\G[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}-[0-9]{2,1}-[0-9]{2,1}(?>T|t|[\t ]++)[0-9]{2,1}:[0-9]{2}:[0-9]{2}(\\.[0-9]*+)?+(?>[\t ]*+Z|[-+][0-9]{2,1}(?>:[0-9]{2})?+)?+(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.timestamp.yaml"
+				},
+				{
+					"match": "\\G<<(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
+					"name": "constant.language.merge.yaml"
+				},
+				{
+					"match": "\\G=(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
+					"name": "constant.language.value.yaml"
+				},
+				{
+					"match": "\\G(?>!|&|\\*)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\\x{2028 2029}\r\n\t ,\\[\\]{}]))",
+					"name": "constant.language.yaml.yaml"
 				}
 			]
 		},
 		"tag-implicit-plain-out": {
-			"comment": "https://yaml.org/spec/1.2.2/#103-core-schema",
+			"comment": "https://yaml.org/type/index.html",
 			"patterns": [
 				{
-					"match": "\\G(?>null|Null|NULL|~)(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"match": "\\G(?>null|Null|NULL|~)(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
 					"name": "constant.language.null.yaml"
 				},
 				{
-					"match": "\\G(?>true|True|TRUE|false|False|FALSE)(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"match": "\\G(?>true|True|TRUE|false|False|FALSE|yes|Yes|YES|y|Y|no|No|NO|n|N|on|On|ON|off|Off|OFF)(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
 					"name": "constant.language.boolean.yaml"
 				},
 				{
-					"match": "\\G[+-]?+[0-9]++(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"match": "\\G[-+]?+(0|[1-9][0-9_]*+)(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
 					"name": "constant.numeric.integer.decimal.yaml"
 				},
 				{
-					"match": "\\G0o[0-7]++(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"match": "\\G[-+]?+0b[0-1_]++(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
+					"name": "constant.numeric.integer.binary.yaml"
+				},
+				{
+					"match": "\\G[-+]?0[0-7_]++(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
 					"name": "constant.numeric.integer.octal.yaml"
 				},
 				{
-					"match": "\\G0x[0-9a-fA-F]++(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"match": "\\G[-+]?+0x[0-9a-fA-F_]++(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
 					"name": "constant.numeric.integer.hexadecimal.yaml"
 				},
 				{
-					"match": "\\G[+-]?+(?>\\.[0-9]++|[0-9]++(?>\\.[0-9]*+)?+)(?>[eE][+-]?+[0-9]++)?+(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
-					"name": "constant.numeric.float.yaml"
+					"match": "\\G[-+]?+[1-9][0-9_]*+(?>:[0-5]?[0-9])++(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
+					"name": "constant.numeric.integer.Sexagesimal.yaml"
 				},
 				{
-					"match": "\\G[+-]?+\\.(?>inf|Inf|INF)(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"match": "\\G[-+]?+(?>[0-9][0-9_]*+)?+\\.[0-9.]*+(?>[eE][-+][0-9]+)?+(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
+					"name": "constant.numeric.float.decimal.yaml"
+				},
+				{
+					"match": "\\G[-+]?+[0-9][0-9_]*+(?>:[0-5]?[0-9])++\\.[0-9_]*+(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
+					"name": "constant.numeric.float.Sexagesimal.yaml"
+				},
+				{
+					"match": "\\G[+-]?+\\.(?>inf|Inf|INF)(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
 					"name": "constant.numeric.float.inf.yaml"
 				},
 				{
-					"match": "\\G\\.(?>nan|NaN|NAN)(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"match": "\\G\\.(?>nan|NaN|NAN)(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
 					"name": "constant.numeric.float.nan.yaml"
+				},
+				{
+					"match": "\\G[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}-[0-9]{2,1}-[0-9]{2,1}(?>T|t|[\t ]++)[0-9]{2,1}:[0-9]{2}:[0-9]{2}(\\.[0-9]*+)?+(?>[\t ]*+Z|[-+][0-9]{2,1}(?>:[0-9]{2})?+)?+(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
+					"name": "constant.numeric.timestamp.yaml"
+				},
+				{
+					"match": "\\G<<(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
+					"name": "constant.language.merge.yaml"
+				},
+				{
+					"match": "\\G=(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
+					"name": "constant.language.value.yaml"
+				},
+				{
+					"match": "\\G(?>!|&|\\*)(?=[\t ]++#|[\t ]*+(?>$|:[\\x{2028 2029}\r\n\t ]))",
+					"name": "constant.language.yaml.yaml"
 				}
 			]
 		},
@@ -942,7 +1010,7 @@
 			],
 			"patterns": [
 				{
-					"match": "!(?=[\r\n\t ])",
+					"match": "!(?=[\\x{2028 2029}\r\n\t ])",
 					"name": "storage.type.tag.non-specific.yaml punctuation.definition.tag.non-specific.yaml"
 				},
 				{
@@ -958,12 +1026,12 @@
 							"name": "constant.character.escape.unicode.8-bit.yaml"
 						},
 						{
-							"match": "%[^\r\n\t ]{2,0}",
+							"match": "%[^\\x{2028 2029}\r\n\t ]{2,0}",
 							"name": "invalid.illegal.constant.character.escape.unicode.8-bit.yaml"
 						},
 						{ "include": "#non-printable" },
 						{
-							"match": "[^\r\n\t a-zA-Z0-9-#;/?:@&=+$,_.!~*'()\\[\\]%>]++",
+							"match": "[^\\x{2028 2029}\r\n\t a-zA-Z0-9-#;/?:@&=+$,_.!~*'()\\[\\]%>]++",
 							"name": "invalid.illegal.unrecognized.yaml"
 						}
 					]
@@ -971,7 +1039,7 @@
 				{
 					"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-shorthand-tag",
 					"begin": "(?=!)",
-					"end": "(?=[\r\n\t ,\\[\\]{}])",
+					"end": "(?=[\\x{2028 2029}\r\n\t ,\\[\\]{}])",
 					"name": "storage.type.tag.shorthand.yaml",
 					"patterns": [
 						{
@@ -997,12 +1065,12 @@
 							"name": "constant.character.escape.unicode.8-bit.yaml"
 						},
 						{
-							"match": "%[^\r\n\t ]{2,0}",
+							"match": "%[^\\x{2028 2029}\r\n\t ]{2,0}",
 							"name": "invalid.illegal.constant.character.escape.unicode.8-bit.yaml"
 						},
 						{ "include": "#non-printable" },
 						{
-							"match": "[^\r\n\t a-zA-Z0-9-#;/?:@&=+$_.~*'()%]++",
+							"match": "[^\\x{2028 2029}\r\n\t a-zA-Z0-9-#;/?:@&=+$,_.~*'()\\[\\]%]++",
 							"name": "invalid.illegal.unrecognized.yaml"
 						}
 					]
@@ -1010,7 +1078,7 @@
 			]
 		},
 		"anchor-property": {
-			"match": "(&)([\\x85[^ ,\\[\\]{}\\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)|(&)",
+			"match": "(&)([^ \\p{Cntrl}\\p{Surrogate}\\x{2028 2029 FFFE FFFF}]++)|(&)",
 			"captures": {
 				"0": { "name": "keyword.control.flow.anchor.yaml" },
 				"1": { "name": "punctuation.definition.anchor.yaml" },
@@ -1019,8 +1087,8 @@
 			}
 		},
 		"alias": {
-			"begin": "(\\*)([\\x85[^ ,\\[\\]{}\\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)|(\\*)",
-			"end": "(?=:[\r\n\t ,\\[\\]{}]|[,\\[\\]{}])",
+			"begin": "(\\*)([^ \\p{Cntrl}\\p{Surrogate}\\x{2028 2029 FFFE FFFF}]++)|(\\*)",
+			"end": "(?=:[\\x{2028 2029}\r\n\t ,\\[\\]{}]|[,\\[\\]{}])",
 			"captures": {
 				"0": { "name": "keyword.control.flow.alias.yaml" },
 				"1": { "name": "punctuation.definition.alias.yaml" },
@@ -1055,7 +1123,6 @@
 				"The surrogate block xD800-xDFFF",
 				"xFFFE and xFFFF"
 			],
-			"//match": "[\\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}&&[^\t\n\r\\x85]]++",
 			"//": [
 				"c-printable ::=",
 				"                    # 8 bit",
@@ -1069,17 +1136,13 @@
 				"[xE000-xFFFD]        # Additional Unicode Areas",
 				"[x010000-x10FFFF]   # 32 bit"
 			],
-			"match": "[^\t\n\r -~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]++",
+			"match": "[^\t\n\r -~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]++",
 			"name": "invalid.illegal.non-printable.yaml",
-			"//": {
-				"c-printable": "[\t\n\r -~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]",
-				"nb-char": "[\t -~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]",
-				"ns-char": "[!-~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]",
-				"ns-char_i": "[\\x85[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]"
-			},
 			"//": {
 				"85": "",
 				"A0": " ",
+				"2028": " ",
+				"2029": " ",
 				"D7FF": "퟿",
 				"E000": "",
 				"FFFD": "�",
@@ -1092,13 +1155,13 @@
 		"comment": {
 			"comment": "Comments must be separated from other tokens by white space characters. `space`, `tab`, `newline` or `carriage-return`. `#(.*)` causes performance issues",
 			"begin": "(?<= |\t|^)#",
-			"end": "\r|\n",
+			"end": "[\r\n\\x{85 2028 2029}]",
 			"captures": { "0": { "name": "punctuation.definition.comment.yaml" } },
 			"name": "comment.line.number-sign.yaml",
 			"patterns": [ { "include": "#non-printable" } ]
 		},
 		"unknown": {
-			"match": ".[[^\"':,\\[\\]{}]&&!-~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]*+",
+			"match": ".[[^\"':,\\[\\]{}]&&!-~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]*+",
 			"name": "invalid.illegal.unrecognized.yaml markup.strikethrough"
 		}
 	}
