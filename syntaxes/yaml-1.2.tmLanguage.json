@@ -1106,7 +1106,7 @@
 		},
 		"comment": {
 			"comment": "Comments must be separated from other tokens by white space characters. `space`, `tab`, `newline` or `carriage-return`. `#(.*)` causes performance issues",
-			"begin": "(?<=[\\x{FEFF}\t ]^)#",
+			"begin": "(?<=[\\x{FEFF}\t ]|^)#",
 			"end": "\r|\n",
 			"captures": { "0": { "name": "punctuation.definition.comment.yaml" } },
 			"name": "comment.line.number-sign.yaml",
