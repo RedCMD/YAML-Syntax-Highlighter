@@ -703,7 +703,10 @@
 			"begin": "\\G(?![\\x{2028 2029}\r\n\t #])",
 			"end": "(?=[\t ]*+(?>:[\\x{2028 2029}\r\n\t ,\\[\\]{}]|[,\\[\\]{}])|[\t ]++#)",
 			"name": "meta.flow.map.key.yaml string.unquoted.other.in.yaml entity.name.tag.yaml",
-			"patterns": [ { "include": "#tag-implicit-plain-in" } ]
+			"patterns": [
+				{ "include": "#tag-implicit-plain-in" },
+				{ "include": "#non-printable" }
+			]
 		},
 		"key-double": {
 			"comment": "https://yaml.org/spec/1.2.2/#double-quoted-style",
