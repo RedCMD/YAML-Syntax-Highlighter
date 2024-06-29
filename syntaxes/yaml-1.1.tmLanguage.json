@@ -856,31 +856,43 @@
 			]
 		},
 		"tag-implicit-plain-in": {
-			"comment": "https://yaml.org/spec/1.2.2/#103-core-schema",
+			"comment": "https://yaml.org/type/index.html",
 			"patterns": [
 				{
 					"match": "\\G(?>null|Null|NULL|~)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
 					"name": "constant.language.null.yaml"
 				},
 				{
-					"match": "\\G(?>true|True|TRUE|false|False|FALSE)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"match": "\\G(?>true|True|TRUE|false|False|FALSE|y|Y|yes|Yes|YES|n|N|no|No|NO|on|On|ON|off|Off|OFF)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
 					"name": "constant.language.boolean.yaml"
 				},
 				{
-					"match": "\\G[+-]?+[0-9]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"match": "\\G[-+]?+(0|[1-9][0-9_]*+)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
 					"name": "constant.numeric.integer.decimal.yaml"
 				},
 				{
-					"match": "\\G0o[0-7]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"match": "\\G[-+]?+0b[0-1_]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.integer.binary.yaml"
+				},
+				{
+					"match": "\\G[-+]?0[0-7_]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
 					"name": "constant.numeric.integer.octal.yaml"
 				},
 				{
-					"match": "\\G0x[0-9a-fA-F]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"match": "\\G[-+]?+0x[0-9a-fA-F_]++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
 					"name": "constant.numeric.integer.hexadecimal.yaml"
 				},
 				{
-					"match": "\\G[+-]?+(?>\\.[0-9]++|[0-9]++(?>\\.[0-9]*+)?+)(?>[eE][+-]?+[0-9]++)?+(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
-					"name": "constant.numeric.float.yaml"
+					"match": "\\G[-+]?+[1-9][0-9_]*+(?>:[0-5]?[0-9])++(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.integer.Sexagesimal.yaml"
+				},
+				{
+					"match": "\\G[-+]?+(?>[0-9][0-9_]*+)?+\\.[0-9.]*+(?>[eE][-+][0-9]+)?+(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.float.decimal.yaml"
+				},
+				{
+					"match": "\\G[-+]?+[0-9][0-9_]*+(?>:[0-5]?[0-9])++\\.[0-9_]*+(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.float.Sexagesimal.yaml"
 				},
 				{
 					"match": "\\G[+-]?+\\.(?>inf|Inf|INF)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
@@ -889,35 +901,63 @@
 				{
 					"match": "\\G\\.(?>nan|NaN|NAN)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
 					"name": "constant.numeric.float.nan.yaml"
+				},
+				{
+					"match": "\\G[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}-[0-9]{2,1}-[0-9]{2,1}(?>T|t|[\t ]++)[0-9]{2,1}:[0-9]{2}:[0-9]{2}(\\.[0-9]*+)?+(?>[\t ]*+Z|[-+][0-9]{2,1}(?>:[0-9]{2})?+)?+(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.numeric.timestamp.yaml"
+				},
+				{
+					"match": "\\G<<(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.language.merge.yaml"
+				},
+				{
+					"match": "\\G=(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.language.value.yaml"
+				},
+				{
+					"match": "\\G(?>!|&|\\*)(?=[\t ]++#|[\t ]*+(?>[\r\n,\\]}]|:[\r\n\t ,\\[\\]{}]))",
+					"name": "constant.language.yaml.yaml"
 				}
 			]
 		},
 		"tag-implicit-plain-out": {
-			"comment": "https://yaml.org/spec/1.2.2/#103-core-schema",
+			"comment": "https://yaml.org/type/index.html",
 			"patterns": [
 				{
 					"match": "\\G(?>null|Null|NULL|~)(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
 					"name": "constant.language.null.yaml"
 				},
 				{
-					"match": "\\G(?>true|True|TRUE|false|False|FALSE)(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"match": "\\G(?>true|True|TRUE|false|False|FALSE|yes|Yes|YES|y|Y|no|No|NO|n|N|on|On|ON|off|Off|OFF)(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
 					"name": "constant.language.boolean.yaml"
 				},
 				{
-					"match": "\\G[+-]?+[0-9]++(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"match": "\\G[-+]?+(0|[1-9][0-9_]*+)(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
 					"name": "constant.numeric.integer.decimal.yaml"
 				},
 				{
-					"match": "\\G0o[0-7]++(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"match": "\\G[-+]?+0b[0-1_]++(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"name": "constant.numeric.integer.binary.yaml"
+				},
+				{
+					"match": "\\G[-+]?0[0-7_]++(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
 					"name": "constant.numeric.integer.octal.yaml"
 				},
 				{
-					"match": "\\G0x[0-9a-fA-F]++(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"match": "\\G[-+]?+0x[0-9a-fA-F_]++(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
 					"name": "constant.numeric.integer.hexadecimal.yaml"
 				},
 				{
-					"match": "\\G[+-]?+(?>\\.[0-9]++|[0-9]++(?>\\.[0-9]*+)?+)(?>[eE][+-]?+[0-9]++)?+(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
-					"name": "constant.numeric.float.yaml"
+					"match": "\\G[-+]?+[1-9][0-9_]*+(?>:[0-5]?[0-9])++(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"name": "constant.numeric.integer.Sexagesimal.yaml"
+				},
+				{
+					"match": "\\G[-+]?+(?>[0-9][0-9_]*+)?+\\.[0-9.]*+(?>[eE][-+][0-9]+)?+(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"name": "constant.numeric.float.decimal.yaml"
+				},
+				{
+					"match": "\\G[-+]?+[0-9][0-9_]*+(?>:[0-5]?[0-9])++\\.[0-9_]*+(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"name": "constant.numeric.float.Sexagesimal.yaml"
 				},
 				{
 					"match": "\\G[+-]?+\\.(?>inf|Inf|INF)(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
@@ -926,6 +966,22 @@
 				{
 					"match": "\\G\\.(?>nan|NaN|NAN)(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
 					"name": "constant.numeric.float.nan.yaml"
+				},
+				{
+					"match": "\\G[0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{4}-[0-9]{2,1}-[0-9]{2,1}(?>T|t|[\t ]++)[0-9]{2,1}:[0-9]{2}:[0-9]{2}(\\.[0-9]*+)?+(?>[\t ]*+Z|[-+][0-9]{2,1}(?>:[0-9]{2})?+)?+(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"name": "constant.numeric.timestamp.yaml"
+				},
+				{
+					"match": "\\G<<(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"name": "constant.language.merge.yaml"
+				},
+				{
+					"match": "\\G=(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"name": "constant.language.value.yaml"
+				},
+				{
+					"match": "\\G(?>!|&|\\*)(?=[\t ]++#|[\t ]*+(?>$|:[\r\n\t ]))",
+					"name": "constant.language.yaml.yaml"
 				}
 			]
 		},
