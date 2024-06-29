@@ -93,52 +93,8 @@
 					"name": "meta.directives.yaml",
 					"patterns": [
 						{
-							"comment": "https://yaml.org/spec/1.2.2/#682-tag-directives",
-							"begin": "\\G(%)(TAG)(?>([\t ]++)((!)(?>[0-9A-Za-z-]*+(!))?+))?+",
-							"end": "$",
-							"applyEndPatternLast": true,
-							"beginCaptures": {
-								"comment": "https://yaml.org/spec/1.2.2/#rule-c-tag-handle",
-								"1": { "name": "punctuation.definition.directive.begin.yaml" },
-								"2": { "name": "keyword.other.directive.tag.yaml" },
-								"3": { "name": "punctuation.whitespace.separator.yaml" },
-								"4": { "name": "storage.type.tag-handle.yaml" },
-								"5": { "name": "punctuation.definition.tag.begin.yaml" },
-								"6": { "name": "punctuation.definition.tag.end.yaml" }
-							},
-							"patterns": [
-								{
-									"comment": "technically the beginning should only validate against a valid uri scheme [A-Za-z][A-Za-z0-9.+-]*",
-									"begin": "\\G[\t ]++(?!#)",
-									"end": "(?=[\\x{2028 2029}\r\n\t ])",
-									"beginCaptures": { "0": { "name": "punctuation.whitespace.separator.yaml" } },
-									"contentName": "support.type.tag-prefix.yaml",
-									"patterns": [
-										{
-											"match": "%[0-9a-fA-F]{2}",
-											"name": "constant.character.escape.unicode.8-bit.yaml"
-										},
-										{
-											"match": "%[^\\x{2028 2029}\r\n\t ]{2,0}",
-											"name": "invalid.illegal.constant.character.escape.unicode.8-bit.yaml"
-										},
-										{
-											"match": "\\G[,\\[\\]{}]",
-											"name": "invalid.illegal.character.uri.yaml"
-										},
-										{ "include": "#non-printable" },
-										{
-											"match": "[^\\x{2028 2029}\r\n\t a-zA-Z0-9-#;/?:@&=+$,_.!~*'()\\[\\]]++",
-											"name": "invalid.illegal.unrecognized.yaml"
-										}
-									]
-								},
-								{ "include": "#presentation-detail" }
-							]
-						},
-						{
 							"comment": "https://yaml.org/spec/1.2.2/#rule-ns-reserved-directive",
-							"begin": "(%)([\\x{85}[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
+							"begin": "(%)([^: \\p{Cntrl}\\p{Surrogate}\\x{2028 2029 FFFE FFFF}]++)",
 							"end": "$",
 							"beginCaptures": {
 								"1": { "name": "punctuation.definition.directive.begin.yaml" },
@@ -146,17 +102,10 @@
 							},
 							"patterns": [
 								{
-									"match": "\\G([\t ]++)([\\x{85}[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
+									"match": "\\G(:)([^ \\p{Cntrl}\\p{Surrogate}\\x{2028 2029 FFFE FFFF}]++)",
 									"captures": {
 										"1": { "name": "punctuation.whitespace.separator.yaml" },
 										"2": { "name": "string.unquoted.directive-name.yaml" }
-									}
-								},
-								{
-									"match": "([\t ]++)([\\x{85}[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
-									"captures": {
-										"1": { "name": "punctuation.whitespace.separator.yaml" },
-										"2": { "name": "string.unquoted.directive-parameter.yaml" }
 									}
 								},
 								{ "include": "#presentation-detail" }
