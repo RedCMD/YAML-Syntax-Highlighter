@@ -4,13 +4,13 @@
 	"name": "YAML Ain't Markup Language",
 	"patterns": [
 		{
-			"comment": "Default to version 1.2",
+			"comment": "Default to YAML version 1.2",
 			"include": "source.yaml.1.2"
 		}
 	],
 	"repository": {
 		"parity": {
-			"comment": "Yes... This is all the code I was able to reuse between all versions 1.3, 1.2, 1.1 and 1.0"
+			"comment": "Yes... That is right. Due to the changes with \\x2028, \\x2029, \\x85 and 'tags'. This is all the code I was able to reuse between all versions 1.3, 1.2, 1.1 and 1.0"
 		}
 	}
 }

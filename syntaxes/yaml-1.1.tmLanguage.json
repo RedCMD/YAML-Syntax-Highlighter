@@ -2,6 +2,18 @@
 	"$schema": "https://raw.githubusercontent.com/RedCMD/TmLanguage-Syntax-Highlighter/main/vscode.tmLanguage.schema.json",
 	"scopeName": "source.yaml.1.1",
 	"name": "YAML 1.1",
+	"comment": "https://yaml.org/spec/1.1/",
+	"//": [
+		"https://github.com/eemeli/yaml/blob/main/docs/10_yaml_syntax.md#changes-from-yaml-11-to-12",
+		"Changes include:",
+		"Booleans",
+		"Numerics",
+		"Merge & Value. << =",
+		"next-line \\x85, line-separator \\x2028 and paragraph-separator \\x2029",
+		"Double quote escape \/",
+		",[]{} inside tags",
+		"Directive inheriting"
+	],
 	"patterns": [
 		{ "include": "#stream" }
 	],
@@ -1111,7 +1123,6 @@
 				"The surrogate block xD800-xDFFF",
 				"xFFFE and xFFFF"
 			],
-			"//match": "[\\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}&&[^\t\n\r\\x85]]++",
 			"//": [
 				"c-printable ::=",
 				"                    # 8 bit",
@@ -1127,12 +1138,6 @@
 			],
 			"match": "[^\t\n\r -~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]++",
 			"name": "invalid.illegal.non-printable.yaml",
-			"//": {
-				"c-printable": "[\t\n\r -~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]",
-				"nb-char": "[\t -~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]",
-				"ns-char": "[!-~\\x85\\xA0-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]",
-				"ns-char_i": "[\\x85[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]"
-			},
 			"//": {
 				"85": "",
 				"A0": " ",
