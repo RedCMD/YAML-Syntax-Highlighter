@@ -3,7 +3,7 @@
 	"displayName": "YAML Syntax Highlighting",
 	"description": "YAML Ain't Markup Language syntax",
 	"publisher": "RedCMD",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"engines": {
 		"vscode": "^1.89.0"
 	},
