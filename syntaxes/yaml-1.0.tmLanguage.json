@@ -26,7 +26,6 @@
 					"while": "^",
 					"name": "meta.stream.yaml",
 					"patterns": [
-						{ "include": "#byte-order-mark" },
 						{ "include": "#directives" },
 						{ "include": "#document" },
 						{ "include": "#presentation-detail" }
@@ -37,7 +36,6 @@
 					"while": "\\G",
 					"name": "meta.stream.yaml",
 					"patterns": [
-						{ "include": "#byte-order-mark" },
 						{ "include": "#directives" },
 						{ "include": "#document" },
 						{ "include": "#presentation-detail" }
@@ -166,7 +164,6 @@
 							"beginCaptures": { "0": { "name": "entity.other.document.end.yaml" } },
 							"patterns": [ { "include": "#presentation-detail" } ]
 						},
-						{ "include": "#byte-order-mark" },
 						{ "include": "#presentation-detail" }
 					]
 				},
@@ -1018,11 +1015,6 @@
 			},
 			"patterns": [ { "include": "#presentation-detail" } ]
 		},
-		"byte-order-mark": {
-			"comment": "﻿",
-			"match": "\\G\\x{FEFF}++",
-			"name": "byte-order-mark.yaml"
-		},
 		"presentation-detail": {
 			"patterns": [
 				{
@@ -1067,7 +1059,6 @@
 				"D7FF": "퟿",
 				"E000": "",
 				"FFFD": "�",
-				"FEFF": "﻿",
 				"FFFF": "￿",
 				"10000": "𐀀",
 				"10FFFF": "􏿿"
