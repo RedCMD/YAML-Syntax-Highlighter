@@ -138,7 +138,7 @@
 						},
 						{
 							"comment": "https://yaml.org/spec/1.2.2/#rule-ns-reserved-directive",
-							"begin": "(%)([\\x{85}[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
+							"begin": "(%)([^ \\p{Cntrl}\\p{Surrogate}\\x{2028 2029 FFFE FFFF}]++)",
 							"end": "$",
 							"beginCaptures": {
 								"1": { "name": "punctuation.definition.directive.begin.yaml" },
@@ -146,14 +146,14 @@
 							},
 							"patterns": [
 								{
-									"match": "\\G([\t ]++)([\\x{85}[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
+									"match": "\\G([\t ]++)([^ \\p{Cntrl}\\p{Surrogate}\\x{2028 2029 FFFE FFFF}]++)",
 									"captures": {
 										"1": { "name": "punctuation.whitespace.separator.yaml" },
 										"2": { "name": "string.unquoted.directive-name.yaml" }
 									}
 								},
 								{
-									"match": "([\t ]++)([\\x{85}[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]++)",
+									"match": "([\t ]++)([^ \\p{Cntrl}\\p{Surrogate}\\x{2028 2029 FFFE FFFF}]++)",
 									"captures": {
 										"1": { "name": "punctuation.whitespace.separator.yaml" },
 										"2": { "name": "string.unquoted.directive-parameter.yaml" }
