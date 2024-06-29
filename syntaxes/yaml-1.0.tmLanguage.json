@@ -795,7 +795,7 @@
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-ns-esc-char",
 			"patterns": [
 				{
-					"match": "\\\\[\\x{2028 2029}\r\n\t0abtnvfre \"\\\\N_LP]",
+					"match": "\\\\[\\x{2028 2029}\r\n0abtnvfre \"\\\\N_LP]",
 					"name": "constant.character.escape.yaml"
 				},
 				{
