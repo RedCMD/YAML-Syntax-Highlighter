@@ -272,50 +272,11 @@
 			},
 			"name": "meta.mapping.yaml",
 			"patterns": [
-				{
-					"comment": "https://yaml.org/spec/1.2.2/#double-quoted-style (BLOCK-KEY)",
-					"begin": "\\G\"",
-					"end": "\"",
-					"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
-					"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
-					"name": "meta.map.key.yaml string.quoted.double.yaml entity.name.tag.yaml",
-					"patterns": [
-						{
-							"match": ".[\t ]*+$",
-							"name": "invalid.illegal.multiline-key.yaml"
-						},
-						{
-							"match": "[^\t -\\x{10FFFF}]++",
-							"name": "invalid.illegal.character.yaml"
-						},
-						{ "include": "#double-escape" }
-					]
-				},
-				{
-					"comment": "https://yaml.org/spec/1.2.2/#rule-c-single-quoted (BLOCK-KEY)",
-					"begin": "\\G'",
-					"end": "'(?!')",
-					"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
-					"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
-					"name": "meta.map.key.yaml string.quoted.single.yaml entity.name.tag.yaml",
-					"patterns": [
-						{
-							"match": ".[\t ]*+$",
-							"name": "invalid.illegal.multiline-key.yaml"
-						},
-						{
-							"match": "[^\t -\\x{10FFFF}]++",
-							"name": "invalid.illegal.character.yaml"
-						},
-						{
-							"match": "''",
-							"name": "constant.character.escape.single-quote.yaml"
-						}
-					]
-				},
-				{ "include": "#block-key-plain" },
+				{ "include": "#block-map-key-double" },
+				{ "include": "#block-map-key-single" },
+				{ "include": "#block-map-key-plain" },
+				{ "include": "#block-map-key-explicit" },
 				{ "include": "#block-map-value" },
-				{ "include": "#block-map-explicit" },
 				{ "include": "#flow-mapping" },
 				{ "include": "#flow-sequence" },
 				{ "include": "#presentation-detail" }
@@ -338,7 +299,7 @@
 			"name": "meta.block.sequence.yaml",
 			"patterns": [ { "include": "#block-node" } ]
 		},
-		"block-map-explicit": {
+		"block-map-key-explicit": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-explicit-key",
 			"begin": "(?=((?<=[-?:]) )?+)\\G( *+)(\\?)(?=[\r\n\t ])",
 			"while": "\\G(?>(\\1\\2)(?![?:0-9A-Za-z$()+./;<=\\\\^_~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]])((?>\t[\t ]*+)?+[^\r\n\t #\\-\\[\\]{}])?+|(?!\\1\\2)( *+)([\t ]*+[^\r\n#])?+)",
@@ -362,15 +323,48 @@
 				{ "include": "#block-node" }
 			]
 		},
-		"block-map-value": {
-			"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-implicit-value",
-			"begin": "(:)(?=[\r\n\t ])",
-			"while": "\\G(?![?:!\"'0-9A-Za-z$()+./;<=\\\\^_~\\[{\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]|-[^\r\n\t ])",
-			"beginCaptures": { "1": { "name": "punctuation.separator.map.value.yaml" } },
-			"name": "meta.map.value.yaml",
-			"patterns": [ { "include": "#block-node" } ]
+		"block-map-key-double": {
+			"comment": "https://yaml.org/spec/1.2.2/#double-quoted-style (BLOCK-KEY)",
+			"begin": "\\G\"",
+			"end": "\"",
+			"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
+			"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
+			"name": "meta.map.key.yaml string.quoted.double.yaml entity.name.tag.yaml",
+			"patterns": [
+				{
+					"match": ".[\t ]*+$",
+					"name": "invalid.illegal.multiline-key.yaml"
+				},
+				{
+					"match": "[^\t -\\x{10FFFF}]++",
+					"name": "invalid.illegal.character.yaml"
+				},
+				{ "include": "#double-escape" }
+			]
 		},
-		"block-key-plain": {
+		"block-map-key-single": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-c-single-quoted (BLOCK-KEY)",
+			"begin": "\\G'",
+			"end": "'(?!')",
+			"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
+			"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
+			"name": "meta.map.key.yaml string.quoted.single.yaml entity.name.tag.yaml",
+			"patterns": [
+				{
+					"match": ".[\t ]*+$",
+					"name": "invalid.illegal.multiline-key.yaml"
+				},
+				{
+					"match": "[^\t -\\x{10FFFF}]++",
+					"name": "invalid.illegal.character.yaml"
+				},
+				{
+					"match": "''",
+					"name": "constant.character.escape.single-quote.yaml"
+				}
+			]
+		},
+		"block-map-key-plain": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-one-line (BLOCK-KEY)",
 			"begin": "\\G(?=[\\x{85}[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ]))",
 			"end": "(?=[\t ]*+:[\r\n\t ]|(?>[\t ]++|\\G)#)",
@@ -394,6 +388,14 @@
 				},
 				{ "include": "#non-printable" }
 			]
+		},
+		"block-map-value": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-implicit-value",
+			"begin": ":(?=[\r\n\t ])",
+			"while": "\\G(?![?:!\"'0-9A-Za-z$()+./;<=\\\\^_~\\[{\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]|-[^\r\n\t ])",
+			"beginCaptures": { "0": { "name": "punctuation.separator.map.value.yaml" } },
+			"name": "meta.map.value.yaml",
+			"patterns": [ { "include": "#block-node" } ]
 		},
 		"block-scalar": {
 			"comment": "https://yaml.org/spec/1.2.2/#81-block-scalar-styles",
@@ -550,7 +552,7 @@
 				{ "include": "#alias" },
 				{ "include": "#double" },
 				{ "include": "#single" },
-				{ "include": "#flow-plain" },
+				{ "include": "#flow-plain-in" },
 				{ "include": "#presentation-detail" }
 			]
 		},
@@ -575,7 +577,7 @@
 						{ "include": "#presentation-detail" }
 					]
 				},
-				{ "include": "#flow-map-key-mapping" },
+				{ "include": "#flow-mapping-map-key" },
 				{ "include": "#flow-map-value-yaml" },
 				{ "include": "#flow-map-value-json" },
 				{ "include": "#flow-node" }
@@ -602,13 +604,13 @@
 						{ "include": "#presentation-detail" }
 					]
 				},
-				{ "include": "#flow-map-key-sequence" },
+				{ "include": "#flow-sequence-map-key" },
 				{ "include": "#flow-map-value-yaml" },
 				{ "include": "#flow-map-value-json" },
 				{ "include": "#flow-node" }
 			]
 		},
-		"flow-map-key-mapping": {
+		"flow-mapping-map-key": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-entry (FLOW-IN)",
 			"patterns": [
 				{
@@ -617,7 +619,7 @@
 					"beginCaptures": { "0": { "name": "punctuation.definition.map.key.yaml" } },
 					"name": "meta.flow.map.explicit.yaml",
 					"patterns": [
-						{ "include": "#flow-map-key-mapping" },
+						{ "include": "#flow-mapping-map-key" },
 						{ "include": "#flow-map-value-yaml" },
 						{ "include": "#flow-map-value-json" },
 						{ "include": "#flow-node" }
@@ -652,7 +654,7 @@
 				}
 			]
 		},
-		"flow-map-key-sequence": {
+		"flow-sequence-map-key": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-entry (FLOW-IN)",
 			"patterns": [
 				{
@@ -661,7 +663,7 @@
 					"beginCaptures": { "0": { "name": "punctuation.definition.map.key.yaml" } },
 					"name": "meta.flow.map.explicit.yaml",
 					"patterns": [
-						{ "include": "#flow-map-key-mapping" },
+						{ "include": "#flow-mapping-map-key" },
 						{ "include": "#flow-map-value-yaml" },
 						{ "include": "#flow-map-value-json" },
 						{ "include": "#flow-node" }
@@ -712,7 +714,7 @@
 			"name": "meta.flow.pair.value.yaml",
 			"patterns": [ { "include": "#flow-node" } ]
 		},
-		"flow-plain": {
+		"flow-plain-in": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-multi-line (FLOW-IN)",
 			"begin": "(?=[\\x{85}[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]|[?:-](?![\r\n\t ,\\[\\]{}]))",
 			"end": "(?=(?>[\t ]++|\\G)#|[\t ]*+[,\\[\\]{}])",
