@@ -343,7 +343,7 @@
 		"block-sequence": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-l+block-sequence",
 			"begin": "(?=((?<=[-?:]) )?+)(?<![^\t ][\t ]*+:|---)\\G( *+)(-)(?=[\\x{2028 2029}\r\n\t ])",
-			"while": "\\G(?>(\\1\\2)(?!-[\\x{2028 2029}\r\n\t ])((?>\t[\t ]*+)?+[^\\x{2028 2029}\r\n\t #\\[\\]{}])?+|(?!\\1\\2)( *+)([\t ]*+[^\r\n#])?+)",
+			"while": "\\G(?>(\\1\\2)(?!-[\\x{2028 2029}\r\n\t ])((?>\t[\t ]*+)?+[^\\x{2028 2029}\r\n\t #\\]}])?+|(?!\\1\\2)( *+)([\t ]*+[^\r\n#])?+)",
 			"beginCaptures": {
 				"2": { "name": "punctuation.whitespace.indentation.yaml" },
 				"3": { "name": "punctuation.definition.block.sequence.item.yaml" }
