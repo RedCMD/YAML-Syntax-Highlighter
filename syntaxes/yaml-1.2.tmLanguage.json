@@ -218,10 +218,21 @@
 				{ "include": "#anchor-property" },
 				{ "include": "#tag-property" },
 				{ "include": "#alias" },
-				{ "include": "#flow-mapping" },
-				{ "include": "#flow-sequence" },
-				{ "include": "#double" },
-				{ "include": "#single" },
+				{
+					"begin": "(?=[\"'\\[{])",
+					"while": "\\G",
+					"patterns": [
+						{ "include": "#flow-mapping" },
+						{ "include": "#flow-sequence" },
+						{ "include": "#double" },
+						{ "include": "#single" },
+						{
+							"begin": "(?!\\G)",
+							"while": "\\G",
+							"patterns": [ { "include": "#presentation-detail" } ]
+						}
+					]
+				},
 				{ "include": "#block-plain-out" },
 				{ "include": "#presentation-detail" }
 			]
