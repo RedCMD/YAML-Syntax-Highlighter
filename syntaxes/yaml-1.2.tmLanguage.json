@@ -219,18 +219,30 @@
 				{ "include": "#tag-property" },
 				{ "include": "#alias" },
 				{
-					"begin": "(?=[\"'\\[{])",
+					"begin": "(?=\"|')",
 					"while": "\\G",
 					"patterns": [
-						{ "include": "#flow-mapping" },
-						{ "include": "#flow-sequence" },
-						{ "include": "#double" },
-						{ "include": "#single" },
 						{
 							"begin": "(?!\\G)",
 							"while": "\\G",
 							"patterns": [ { "include": "#presentation-detail" } ]
-						}
+						},
+						{ "include": "#double" },
+						{ "include": "#single" }
+					]
+				},
+				{
+					"begin": "(?=\\[|{)",
+					"while": "\\G",
+					"patterns": [
+						{ "include": "#block-map-value" },
+						{
+							"begin": "(?!\\G)(?![\r\n\t ])",
+							"while": "\\G",
+							"patterns": [ { "include": "#presentation-detail" } ]
+						},
+						{ "include": "#flow-mapping" },
+						{ "include": "#flow-sequence" }
 					]
 				},
 				{ "include": "#block-plain-out" },
