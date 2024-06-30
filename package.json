@@ -38,6 +38,7 @@
 					".yaml-tmtheme",
 					".clang-format",
 					".eslintrc",
+					".stylelintrc",
 					".yamllint",
 					".yaml.erb",
 					".yml.erb",
