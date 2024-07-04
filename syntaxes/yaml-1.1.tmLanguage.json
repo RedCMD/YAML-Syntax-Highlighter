@@ -372,7 +372,7 @@
 		"block-map-explicit": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-explicit-key",
 			"begin": "(?=((?<=[-?:]) )?+)\\G( *+)(\\?)(?=[\\x{85 2028 2029}\r\n\t ])",
-			"while": "\\G(?>(\\1\\2)(?![?:0-9A-Za-z$()+./;<=\\\\^_~\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{2028 2029 FEFF}]])((?>\t[\t ]*+)?+[^\\x{85 2028 2029}\r\n\t #\\-\\[\\]{}])?+|(?!\\1\\2)( *+)([\t ]*+[^\\x{85 2028 2029}\r\n#])?+)",
+			"while": "\\G(?>(\\1\\2)(?![?:0-9A-Za-z$()+./;<=\\\\^_~\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{2028 2029}]])((?>\t[\t ]*+)?+[^\\x{85 2028 2029}\r\n\t #\\-\\[\\]{}])?+|(?!\\1\\2)( *+)([\t ]*+[^\\x{85 2028 2029}\r\n#])?+)",
 			"beginCaptures": {
 				"2": { "name": "punctuation.whitespace.indentation.yaml" },
 				"3": { "name": "punctuation.definition.map.key.yaml" },
@@ -396,7 +396,7 @@
 		"block-map-value": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-implicit-value",
 			"begin": "(:)(?=[\\x{85 2028 2029}\r\n\t ])",
-			"while": "\\G(?![?:!\"'0-9A-Za-z$()+./;<=\\\\^_~\\[{\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{2028 2029 FEFF}]]|-[^\\x{85 2028 2029}\r\n\t ])",
+			"while": "\\G(?![?:!\"'0-9A-Za-z$()+./;<=\\\\^_~\\[{\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{2028 2029}]]|-[^\\x{85 2028 2029}\r\n\t ])",
 			"beginCaptures": { "1": { "name": "punctuation.separator.map.value.yaml" } },
 			"name": "meta.map.value.yaml",
 			"patterns": [ { "include": "#block-node" } ]
@@ -1209,8 +1209,8 @@
 			"//": {
 				"85": "",
 				"A0": " ",
-				"2028": " ",
-				"2029": " ",
+				"2028": "",
+				"2029": "",
 				"D7FF": "퟿",
 				"E000": "",
 				"FFFD": "�",

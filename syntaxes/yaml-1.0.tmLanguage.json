@@ -26,6 +26,7 @@
 					"while": "^",
 					"name": "meta.stream.yaml",
 					"patterns": [
+						{ "include": "#byte-order-mark" },
 						{ "include": "#directives" },
 						{ "include": "#document" },
 						{ "include": "#presentation-detail" }
@@ -36,6 +37,7 @@
 					"while": "\\G",
 					"name": "meta.stream.yaml",
 					"patterns": [
+						{ "include": "#byte-order-mark" },
 						{ "include": "#directives" },
 						{ "include": "#document" },
 						{ "include": "#presentation-detail" }
@@ -164,6 +166,7 @@
 							"beginCaptures": { "0": { "name": "entity.other.document.end.yaml" } },
 							"patterns": [ { "include": "#presentation-detail" } ]
 						},
+						{ "include": "#byte-order-mark" },
 						{ "include": "#presentation-detail" }
 					]
 				},
@@ -216,7 +219,7 @@
 		},
 		"block-mapping": {
 			"//": "The check for plain keys is expensive",
-			"begin": "(?=((?<=[-?:]) )?+)(?<![^\t ][\t ]*+:|---)\\G( *+)([\t ]*+)((?>[!&*][^\\x{85 2028 2029}\r\n\t ]*+[\t ]++)*+)(?=(?>(?#Double Quote)\"(?>[^\\\\\"]++|\\\\.)*+\"|(?#Single Quote)'(?>[^']++|'')*+'|(?#Plain)(?>[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ]))(?>[^:#]++|:(?![\\x{85 2028 2029}\r\n\t ])|(?<! |\t)#++)*+)?+(?#Map Value)[\t ]*+:[\\x{85 2028 2029}\r\n\t ]|(?#Explicit)\\?[\\x{85 2028 2029}\r\n\t ])|(?#Flow-Map/Seq)(?<=]|})([\t ]*+)(?=:)",
+			"begin": "(?=((?<=[-?:]) )?+)(?<![^\t ][\t ]*+:|---)\\G( *+)([\t ]*+)((?>[!&*][^\\x{85 2028 2029}\r\n\t ]*+[\t ]++)*+)(?=(?>(?#Double Quote)\"(?>[^\\\\\"]++|\\\\.)*+\"|(?#Single Quote)'(?>[^']++|'')*+'|(?#Plain)(?>[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ]))(?>[^:#]++|:(?![\\x{85 2028 2029}\r\n\t ])|(?<! |\t)#++)*+)?+(?#Map Value)[\t ]*+:[\\x{85 2028 2029}\r\n\t ]|(?#Explicit)\\?[\\x{85 2028 2029}\r\n\t ])|(?#Flow-Map/Seq)(?<=]|})([\t ]*+)(?=:)",
 			"while": "\\G(?>(\\1\\2)((?>[!&*][^\\x{85 2028 2029}\r\n\t ]*+[\t ]++)*+)((?>\t[\t ]*+)?+[^\\x{85 2028 2029}\r\n\t ?:\\-#!&*\"'\\[\\]{}0-9A-Za-z$()+./;<=\\\\^_~\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}])?+|( *+)([\t ]*+[^\\x{85 2028 2029}\r\n#])?+)",
 			"beginCaptures": {
 				"2": { "name": "punctuation.whitespace.indentation.yaml" },
@@ -318,7 +321,7 @@
 		"block-map-explicit": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-explicit-key",
 			"begin": "(?=((?<=[-?:]) )?+)\\G( *+)(\\?)(?=[\\x{85 2028 2029}\r\n\t ])",
-			"while": "\\G(?>(\\1\\2)(?![?:0-9A-Za-z$()+./;<=\\\\^_~\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{2028 2029 FEFF}]])((?>\t[\t ]*+)?+[^\\x{85 2028 2029}\r\n\t #\\-\\[\\]{}])?+|(?!\\1\\2)( *+)([\t ]*+[^\\x{85 2028 2029}\r\n#])?+)",
+			"while": "\\G(?>(\\1\\2)(?![?:0-9A-Za-z$()+./;<=\\\\^_~\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{2028 2029}]])((?>\t[\t ]*+)?+[^\\x{85 2028 2029}\r\n\t #\\-\\[\\]{}])?+|(?!\\1\\2)( *+)([\t ]*+[^\\x{85 2028 2029}\r\n#])?+)",
 			"beginCaptures": {
 				"2": { "name": "punctuation.whitespace.indentation.yaml" },
 				"3": { "name": "punctuation.definition.map.key.yaml" },
@@ -342,7 +345,7 @@
 		"block-map-value": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-implicit-value",
 			"begin": "(:)(?=[\\x{85 2028 2029}\r\n\t ])",
-			"while": "\\G(?![?:!\"'0-9A-Za-z$()+./;<=\\\\^_~\\[{\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{2028 2029 FEFF}]]|-[^\\x{85 2028 2029}\r\n\t ])",
+			"while": "\\G(?![?:!\"'0-9A-Za-z$()+./;<=\\\\^_~\\[{\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{2028 2029}]]|-[^\\x{85 2028 2029}\r\n\t ])",
 			"beginCaptures": { "1": { "name": "punctuation.separator.map.value.yaml" } },
 			"name": "meta.map.value.yaml",
 			"patterns": [ { "include": "#block-node" } ]
@@ -478,7 +481,7 @@
 		},
 		"block-plain-out": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-multi-line (FLOW-OUT)",
-			"begin": "(?=[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ]))",
+			"begin": "(?=[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ]))",
 			"while": "\\G",
 			"patterns": [
 				{
@@ -616,7 +619,7 @@
 				},
 				{
 					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-implicit-entry (FLOW-IN)",
-					"begin": "(?=(?>[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ,\\[\\]{}])))",
+					"begin": "(?=(?>[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ,\\[\\]{}])))",
 					"end": "(?=[,\\[\\]{}])",
 					"name": "meta.flow.map.implicit.yaml",
 					"patterns": [
@@ -660,7 +663,7 @@
 				},
 				{
 					"comment": "https://yaml.org/spec/1.2.2/#rule-ns-flow-map-implicit-entry (FLOW-IN)",
-					"begin": "(?<=[\t ,\\[{]|^)(?=(?>[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ,\\[\\]{}]))(?>[^:#,\\[\\]{}]++|:(?![\\x{85 2028 2029}\r\n\t ,\\[\\]{}])|(?<! |\t)#++)*+:[\\x{85 2028 2029}\r\n\t ,\\[\\]{}])",
+					"begin": "(?<=[\t ,\\[{]|^)(?=(?>[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ,\\[\\]{}]))(?>[^:#,\\[\\]{}]++|:(?![\\x{85 2028 2029}\r\n\t ,\\[\\]{}])|(?<! |\t)#++)*+:[\\x{85 2028 2029}\r\n\t ,\\[\\]{}])",
 					"end": "(?=[,\\[\\]{}])",
 					"name": "meta.flow.map.implicit.yaml",
 					"patterns": [
@@ -705,7 +708,7 @@
 		},
 		"flow-plain-in": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-multi-line (FLOW-IN)",
-			"begin": "(?=[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ,\\[\\]{}]))",
+			"begin": "(?=[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ,\\[\\]{}]))",
 			"end": "(?=(?>[\t ]++|\\G)#|[\t ]*+[,\\[\\]{}])",
 			"name": "string.unquoted.plain.in.yaml",
 			"patterns": [
@@ -727,7 +730,7 @@
 		},
 		"flow-key-plain-out": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-ns-plain-one-line (FLOW-OUT)",
-			"begin": "(?=[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ]))",
+			"begin": "(?=[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ]))",
 			"end": "(?=[\t ]*+:[\\x{85 2028 2029}\r\n\t ]|[\t ]++#)",
 			"name": "meta.map.key.yaml string.unquoted.plain.yaml entity.name.tag.yaml",
 			"patterns": [
@@ -1063,11 +1066,35 @@
 			},
 			"patterns": [ { "include": "#presentation-detail" } ]
 		},
+		"byte-order-mark": {
+			"comment": "﻿",
+			"begin": "\\G",
+			"while": "\\G(?=[\\x{FEFF 85 2028 2029}\r\n\t ])",
+			"patterns": [
+				{
+					"begin": "(?=#)",
+					"while": "\\G",
+					"patterns": [ { "include": "#presentation-detail" } ]
+				},
+				{
+					"begin": "\\G\\x{FEFF}",
+					"while": "\\G",
+					"beginCaptures": { "0": { "name": "byte-order-mark.yaml" } },
+					"patterns": [ { "include": "#presentation-detail" } ]
+				},
+				{ "include": "#presentation-detail" }
+			]
+		},
 		"presentation-detail": {
 			"patterns": [
 				{
 					"match": "[\t ]++",
 					"name": "punctuation.whitespace.separator.yaml"
+				},
+				{
+					"comment": "https://yaml.org/spec/1.1/#id871136",
+					"match": "[\\x{85 2028 2029}\r\n]++",
+					"name": "punctuation.separator.line-break.yaml"
 				},
 				{ "include": "#non-printable" },
 				{ "include": "#comment" },
@@ -1102,19 +1129,20 @@
 			"//": {
 				"85": "",
 				"A0": " ",
-				"2028": " ",
-				"2029": " ",
+				"2028": "",
+				"2029": "",
 				"D7FF": "퟿",
 				"E000": "",
 				"FFFD": "�",
+				"FEFF": "﻿",
 				"FFFF": "￿",
 				"10000": "𐀀",
 				"10FFFF": "􏿿"
 			}
 		},
 		"comment": {
-			"comment": "Comments must be separated from other tokens by white space characters. `space`, `tab`, `newline` or `carriage-return`. `#(.*)` causes performance issues",
-			"begin": "(?<=^|[\\x{85 2028 2029} ])#",
+			"comment": "Comments must be separated from other tokens by white space characters. `space`, `newline` or `carriage-return`. `#(.*)` causes performance issues",
+			"begin": "(?<=^|[\\x{FEFF 85 2028 2029} ])#",
 			"end": "[\\x{85 2028 2029}\r\n]",
 			"captures": { "0": { "name": "punctuation.definition.comment.yaml" } },
 			"name": "comment.line.number-sign.yaml",
