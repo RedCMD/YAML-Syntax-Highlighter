@@ -1161,7 +1161,7 @@
 		},
 		"unknown": {
 			"match": ".[[^\"':,\\[\\]{}]&&!-~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]*+",
-			"name": "invalid.illegal.unrecognized.yaml markup.strikethrough"
+			"name": "invalid.illegal.unrecognized.yaml"
 		}
 	}
 }
