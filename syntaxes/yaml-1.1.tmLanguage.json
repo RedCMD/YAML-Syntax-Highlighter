@@ -251,17 +251,19 @@
 					]
 				},
 				{
-					"begin": "(?=\\[|{)",
-					"while": "\\G",
+					"begin": "(?={)",
+					"end": "$",
 					"patterns": [
-						{ "include": "#block-mapping" },
-						{
-							"begin": "(?!\\G)(?![\r\n\t ])",
-							"while": "\\G",
-							"patterns": [ { "include": "#presentation-detail" } ]
-						},
 						{ "include": "#flow-mapping" },
-						{ "include": "#flow-sequence" }
+						{ "include": "#presentation-detail" }
+					]
+				},
+				{
+					"begin": "(?=\\[)",
+					"end": "$",
+					"patterns": [
+						{ "include": "#flow-sequence" },
+						{ "include": "#presentation-detail" }
 					]
 				},
 				{ "include": "#block-plain-out" },
@@ -270,7 +272,7 @@
 		},
 		"block-mapping": {
 			"//": "The check for plain keys is expensive",
-			"begin": "(?=((?<=[-?:]) )?+)(?<![^\t ][\t ]*+:|---)\\G( *+)([\t ]*+)((?>[!&*][^\\x{85 2028 2029}\r\n\t ]*+[\t ]++)*+)(?=(?>(?#Double Quote)\"(?>[^\\\\\"]++|\\\\.)*+\"|(?#Single Quote)'(?>[^']++|'')*+'|(?#Plain)(?>[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ]))(?>[^:#]++|:(?![\\x{85 2028 2029}\r\n\t ])|(?<! |\t)#++)*+)?+(?#Map Value)[\t ]*+:[\\x{85 2028 2029}\r\n\t ]|(?#Explicit)\\?[\\x{85 2028 2029}\r\n\t ])|(?#Flow-Map/Seq)(?<=]|})([\t ]*+)(?=:)",
+			"begin": "(?=((?<=[-?:]) )?+)(?<![^\t ][\t ]*+:|---)\\G( *+)([\t ]*+)((?>[!&*][^\\x{85 2028 2029}\r\n\t ]*+[\t ]++)*+)(?=(?>(?#Double Quote)\"(?>[^\\\\\"]++|\\\\.)*+\"|(?#Single Quote)'(?>[^']++|'')*+'|(?#Flow-Map){(?>[^\\x{85 2028 2029}}]++|}[ \t]*+(?!:[\\x{85 2028 2029}\r\n\t ]))++}|(?#Flow-Seq)\\[(?>[^\\x{85 2028 2029}\\]]++|][ \t]*+(?!:[\\x{85 2028 2029}\r\n\t ]))++]|(?#Plain)(?>[^-?:,\\[\\]{}#&*!|>'\"%@` \\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}]|[?:-](?![\\x{85 2028 2029}\r\n\t ]))(?>[^:#]++|:(?![\\x{85 2028 2029}\r\n\t ])|(?<! |\t)#++)*+)?+(?#Map Value)[\t ]*+:[\\x{85 2028 2029}\r\n\t ]|(?#Explicit)\\?[\\x{85 2028 2029}\r\n\t ])",
 			"while": "\\G(?>(\\1\\2)((?>[!&*][^\\x{85 2028 2029}\r\n\t ]*+[\t ]++)*+)((?>\t[\t ]*+)?+[^\\x{85 2028 2029}\r\n\t ?:\\-#!&*\"'\\[\\]{}0-9A-Za-z$()+./;<=\\\\^_~\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}])?+|( *+)([\t ]*+[^\\x{85 2028 2029}\r\n#])?+)",
 			"beginCaptures": {
 				"2": { "name": "punctuation.whitespace.indentation.yaml" },
@@ -283,8 +285,7 @@
 						{ "include": "#alias" },
 						{ "include": "#presentation-detail" }
 					]
-				},
-				"5": { "name": "punctuation.whitespace.separator.yaml" }
+				}
 			},
 			"whileCaptures": {
 				"1": { "name": "punctuation.whitespace.indentation.yaml" },
