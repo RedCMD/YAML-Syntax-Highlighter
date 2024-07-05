@@ -10,7 +10,93 @@
 	],
 	"repository": {
 		"parity": {
-			"comment": "Yes... That is right. Due to the changes with \\x2028, \\x2029, \\x85 and 'tags'. This is all the code I was able to reuse between all versions 1.3, 1.2, 1.1 and 1.0"
+			"comment": "Yes... That is right. Due to the changes with \\x2028, \\x2029, \\x85 and 'tags'. This is all the code I was able to reuse between all YAML versions 1.3, 1.2, 1.1 and 1.0"
+		},
+		"block-map-key-single": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-c-single-quoted (BLOCK-KEY)",
+			"begin": "\\G'",
+			"end": "'(?!')",
+			"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
+			"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
+			"name": "meta.map.key.yaml string.quoted.single.yaml entity.name.tag.yaml",
+			"patterns": [
+				{
+					"match": ".[\t ]*+$",
+					"name": "invalid.illegal.multiline-key.yaml"
+				},
+				{
+					"match": "[^\t -\\x{10FFFF}]++",
+					"name": "invalid.illegal.character.yaml"
+				},
+				{
+					"match": "''",
+					"name": "constant.character.escape.single-quote.yaml"
+				}
+			]
+		},
+		"key-single": {
+			"comment": "https://yaml.org/spec/1.2.2/#rule-c-single-quoted (FLOW-OUT)",
+			"begin": "'",
+			"end": "'(?!')",
+			"beginCaptures": { "0": { "name": "punctuation.definition.string.begin.yaml" } },
+			"endCaptures": { "0": { "name": "punctuation.definition.string.end.yaml" } },
+			"name": "meta.map.key.yaml string.quoted.single.yaml entity.name.tag.yaml",
+			"patterns": [
+				{
+					"match": "[^\t -\\x{10FFFF}]++",
+					"name": "invalid.illegal.character.yaml"
+				},
+				{
+					"match": "''",
+					"name": "constant.character.escape.single-quote.yaml"
+				}
+			]
+		},
+		"non-printable": {
+			"//": [
+				"To ensure readability, YAML streams use only the printable subset of the Unicode character set",
+				"The allowed character range explicitly excludes",
+				"The C0 control block x00-x1F (except for TAB x09, LF x0A and CR x0D which are allowed)",
+				"DEL x7F",
+				"The C1 control block x80-x9F (except for NEL x85 which is allowed)",
+				"The surrogate block xD800-xDFFF",
+				"xFFFE and xFFFF"
+			],
+			"//match": "[\\p{Cntrl}\\p{Surrogate}\\x{FFFE FFFF}&&[^\t\n\r\\x{85}]]++",
+			"//": [
+				"c-printable ::=",
+				"                    # 8 bit",
+				"x09                  # Tab (\t)",
+				"x0A                  # Line feed (LF \n)",
+				"x0D                  # Carriage Return (CR \r)",
+				"[x20-x7E]            # Printable ASCII",
+				"                    # 16 bit",
+				"x85                  # Next Line (NEL)",
+				"[xA0-xD7FF]          # Basic Multilingual Plane (BMP)",
+				"[xE000-xFFFD]        # Additional Unicode Areas",
+				"[x010000-x10FFFF]   # 32 bit"
+			],
+			"match": "[^\t\n\r -~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]++",
+			"name": "invalid.illegal.non-printable.yaml",
+			"//": {
+				"c-printable": "[\t\n\r -~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}]",
+				"nb-char": "[\t -~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]",
+				"ns-char": "[!-~\\x{85}\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{FEFF}]]",
+				"ns-char_i": "[\\x{85}[^ \\p{Cntrl}\\p{Surrogate}\\x{FEFF FFFE FFFF}]]"
+			},
+			"//": {
+				"85": "",
+				"A0": " ",
+				"2028": "",
+				"2029": "",
+				"D7FF": "퟿",
+				"E000": "",
+				"FFFD": "�",
+				"FEFF": "﻿",
+				"FFFF": "￿",
+				"10000": "𐀀",
+				"10FFFF": "􏿿"
+			}
 		}
 	}
 }
