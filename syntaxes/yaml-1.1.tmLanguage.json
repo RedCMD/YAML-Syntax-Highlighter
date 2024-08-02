@@ -397,7 +397,8 @@
 		},
 		"block-map-value": {
 			"comment": "https://yaml.org/spec/1.2.2/#rule-c-l-block-map-implicit-value",
-			"begin": ":(?=[\\x{85 2028 2029}\r\n\t ])",
+			"//": "Assumming 3rd party preprocessing variables `{{...}}` turn into valid map-keys when inside a block-mapping",
+			"begin": ":(?=[\\x{85 2028 2029}\r\n\t ])|(?<=}})(?=[\t ]++#|[\t ]*+$)",
 			"while": "\\G(?![?:!\"'0-9A-Za-z$()+./;<=\\\\^_~\\[{\\x{A0}-\\x{D7FF}\\x{E000}-\\x{FFFD}\\x{010000}-\\x{10FFFF}&&[^\\x{2028 2029}]]|-[^\\x{85 2028 2029}\r\n\t ])",
 			"beginCaptures": { "0": { "name": "punctuation.separator.map.value.yaml" } },
 			"name": "meta.map.value.yaml",
