@@ -1,5 +1,7 @@
 # YAML Ain't Markup Language syntax
 
+[Visual Studio Code](https://code.visualstudio.com/) uses these [grammars](https://github.com/RedCMD/YAML-Syntax-Highlighter/tree/main/syntaxes) as part of their [built-in](https://github.com/microsoft/vscode/tree/main/extensions/yaml) syntax highlighting and basic language support
+
 ## Features
 
 - Syntax highlighting
