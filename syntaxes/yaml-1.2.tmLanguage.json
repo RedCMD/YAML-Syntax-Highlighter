@@ -22,18 +22,6 @@
 					]
 				},
 				{
-					"comment": "Support legacy FrontMatter integration",
-					"begin": "\\G$",
-					"while": "^(?! {3,0}-{3,}[ \t]*+$|[ \t]*+\\.{3}$)",
-					"name": "meta.stream.yaml",
-					"patterns": [
-						{ "include": "#byte-order-mark" },
-						{ "include": "#directives" },
-						{ "include": "#document" },
-						{ "include": "#presentation-detail" }
-					]
-				},
-				{
 					"comment": "For when YAML is embedded inside a Markdown code-block",
 					"begin": "\\G",
 					"while": "\\G",

@@ -4,6 +4,13 @@
 	"name": "YAML Ain't Markup Language",
 	"patterns": [
 		{
+			"comment": "Support legacy FrontMatter integration",
+			"//": "https://github.com/microsoft/vscode-markdown-tm-grammar/pull/162",
+			"begin": "(?<=^-{3,}\\s*+)\\G$",
+			"while": "^(?! {3,0}-{3,}[ \t]*+$|[ \t]*+\\.{3}$)",
+			"patterns": [ { "include": "source.yaml.1.2" } ]
+		},
+		{
 			"comment": "Default to YAML version 1.2",
 			"include": "source.yaml.1.2"
 		}
