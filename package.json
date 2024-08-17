@@ -76,7 +76,6 @@
 				"path": "./syntaxes/yaml.tmLanguage.json",
 				"unbalancedBracketScopes": [
 					"invalid.illegal",
-					"meta.scalar.yaml",
 					"storage.type.tag.shorthand.yaml",
 					"keyword.control.flow"
 				]
