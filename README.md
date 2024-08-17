@@ -15,3 +15,4 @@
 - Original YAML [grammar](https://github.com/textmate/yaml.tmbundle)
 - Atom's YAML [grammar](https://github.com/atom/language-yaml)
 - Offical YAML [website](https://yaml.org/)
+- Github [repo](https://github.com/RedCMD/YAML-Syntax-Highlighter)
