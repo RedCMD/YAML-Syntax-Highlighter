@@ -16,3 +16,4 @@
 - Atom's YAML [grammar](https://github.com/atom/language-yaml)
 - Offical YAML [website](https://yaml.org/)
 - Github [repo](https://github.com/RedCMD/YAML-Syntax-Highlighter)
+- Marketplace [extension](https://marketplace.visualstudio.com/items?itemName=RedCMD.yaml-syntax)
