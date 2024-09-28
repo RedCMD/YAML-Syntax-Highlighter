@@ -47,7 +47,8 @@
 					".Boxfile",
 					".Kptfile",
 					".Krmfile",
-					".ksy"
+					".ksy",
+					".winget"
 				],
 				"firstLine": "^#cloud-config|^%YAML([ \t]+[0-9]+\\.[0-9]+|:1\\.1)([ \t]+#|[ \t]*$)|^---$",
 				"configuration": "./language-configuration.json"
