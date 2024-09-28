@@ -310,14 +310,13 @@
 			"patterns": [
 				{
 					"comment": "https://yaml.org/spec/1.2.2/#8111-block-indentation-indicator",
-					"begin": "(?>(\\|)|(>))(?<chomp>[+-])?+((0)|(1)|(2)|(3)|(4)|(5)|(6)|(7)|(8)|(9))(?(<chomp>)|([+-]))?+",
-					"while": "\\G(?>(?>(?!\\5)|(?!\\6) |(?!\\7) {2}|(?!\\8) {3}|(?!\\9) {4}|(?!\\10) {5}|(?!\\11) {6}|(?!\\12) {7}|(?!\\13) {8}|(?!\\14) {9})| *+($|[^#]))",
+					"begin": "(?>(\\|)|(>))(?<chomp>[+-])?+([0-9])(?(<chomp>)|\\g<chomp>)?+",
+					"while": "\\G(?> {\\4}| *+($|[^#]))",
 					"beginCaptures": {
 						"1": { "name": "keyword.control.flow.block-scalar.literal.yaml" },
 						"2": { "name": "keyword.control.flow.block-scalar.folded.yaml" },
 						"3": { "name": "storage.modifier.chomping-indicator.yaml" },
-						"4": { "name": "constant.numeric.indentation-indicator.yaml" },
-						"15": { "name": "storage.modifier.chomping-indicator.yaml" }
+						"4": { "name": "constant.numeric.indentation-indicator.yaml" }
 					},
 					"whileCaptures": {
 						"0": { "name": "punctuation.whitespace.indentation.yaml" },
@@ -339,7 +338,6 @@
 					]
 				},
 				{
-					"comment": "https://yaml.org/spec/1.2.2/#rule-c-b-block-header",
 					"//": "Soooooooo many edge cases",
 					"begin": "(?>(\\|)|(>))([+-]?+)",
 					"while": "\\G",
