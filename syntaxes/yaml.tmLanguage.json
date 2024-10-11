@@ -11,6 +11,24 @@
 			"patterns": [ { "include": "source.yaml.1.2" } ]
 		},
 		{
+			"comment": "For when YAML is embedded inside HTML",
+			"//": "https://github.com/vuejs/language-tools/issues/4654",
+			"begin": "(?<=>)\\G(?!<)",
+			"end": "(?=<)",
+			"name": "meta.stream.yaml",
+			"patterns": [
+				{
+					"begin": "\\G(?![^<]*+<)",
+					"while": "^(?![^<]*<)",
+					"patterns": [ { "include": "source.yaml.1.2" } ]
+				},
+				{
+					"match": "[^<]++",
+					"captures": { "0": { "patterns": [ { "include": "source.yaml.1.2" } ] } }
+				}
+			]
+		},
+		{
 			"comment": "Default to YAML version 1.2",
 			"include": "source.yaml.1.2"
 		}
