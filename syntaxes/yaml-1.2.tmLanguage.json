@@ -23,7 +23,7 @@
 				},
 				{
 					"comment": "For when YAML is embedded inside a Markdown code-block",
-					"begin": "\\G",
+					"begin": "\\G(?!$)",
 					"while": "\\G",
 					"name": "meta.stream.yaml",
 					"patterns": [
@@ -213,8 +213,8 @@
 		},
 		"block-node": {
 			"patterns": [
-				{ "include": "#block-sequence" },
 				{ "include": "#block-mapping" },
+				{ "include": "#block-sequence" },
 				{ "include": "#block-scalar" },
 				{ "include": "#anchor-property" },
 				{ "include": "#tag-property" },
@@ -1073,7 +1073,7 @@
 		"comment": {
 			"comment": "Comments must be separated from other tokens by white space characters. `space`, `tab`, `newline` or `carriage-return`. `#(.*)` causes performance issues",
 			"begin": "(?<=[\\x{FEFF}\t ]|^)#",
-			"end": "\r|\n",
+			"end": "$",
 			"captures": { "0": { "name": "punctuation.definition.comment.yaml" } },
 			"name": "comment.line.number-sign.yaml",
 			"patterns": [ { "include": "source.yaml#non-printable" } ]
