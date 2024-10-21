@@ -375,6 +375,10 @@
 					"name": "punctuation.whitespace.separator.yaml"
 				},
 				{
+					"match": "[^\r\n\t ](?=[\t ]*+$)",
+					"name": "invalid.illegal.expected-map-separator.yaml"
+				},
+				{
 					"match": "\\x{FEFF}",
 					"name": "invalid.illegal.bom.yaml"
 				},
