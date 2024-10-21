@@ -796,7 +796,7 @@
 			"name": "meta.map.key.yaml string.quoted.double.yaml entity.name.tag.yaml",
 			"patterns": [
 				{
-					"match": "[^\t -\\x{10FFFF}]++",
+					"match": "[^\r\n\t -\\x{10FFFF}]++",
 					"name": "invalid.illegal.character.yaml"
 				},
 				{ "include": "#double-escape" }
