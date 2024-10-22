@@ -6,7 +6,7 @@
 
 - Syntax highlighting
 - Bracket matching
-- YAML versions [1.2](https://yaml.org/spec/1.2.2), [1.1](https://yaml.org/spec/1.1/) and [1.0](https://yaml.org/spec/1.0/)
+- YAML versions [1.2](https://yaml.org/spec/1.2.2), [1.1](https://yaml.org/spec/1.1/), [1.0](https://yaml.org/spec/1.0/) and [1.3](https://spec.yaml.io/main/spec/1.3.0/)
 
 
 ## For more information
