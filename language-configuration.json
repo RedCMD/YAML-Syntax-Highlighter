@@ -32,6 +32,7 @@
 		["{", "}"],
 		["[", "]"]
 	],
+	// markers that can be folded
 	"folding": {
 		"offSide": true,
 		"markers": {
@@ -39,8 +40,122 @@
 			"end": "^[ \t]*#[ \t]*endregion\\b|^\\.{3}[ \t]*(#.*)?$"
 		}
 	},
-	"indentationRules": {
-		"increaseIndentPattern": "^\\s*.*(:|-) ?(&\\w+)?(\\{[^}\"']*|\\[[^\\]\"']*)?$",
-		"decreaseIndentPattern": "^\\s+[\\]\\}]$"
-	}
+	// Only the first successful rule is chosen
+	"onEnterRules": [
+		{
+			// indent 1 space after block-scalar with indentation-indicator
+			"action": {
+				"appendText": " ",
+				"indent": "none",
+			},
+			"afterText": "^(?![ \t]*#)",
+			"beforeText": "([ \t]+|^)[|>][+-]?1"
+		},
+		{
+			"action": {
+				"appendText": "  ",
+				"indent": "none",
+			},
+			"afterText": "^(?![ \t]*#)",
+			"beforeText": "([ \t]+|^)[|>][+-]?2"
+		},
+		{
+			"action": {
+				"appendText": "   ",
+				"indent": "none",
+			},
+			"afterText": "^(?![ \t]*#)",
+			"beforeText": "([ \t]+|^)[|>][+-]?3"
+		},
+		{
+			"action": {
+				"appendText": "    ",
+				"indent": "none",
+			},
+			"afterText": "^(?![ \t]*#)",
+			"beforeText": "([ \t]+|^)[|>][+-]?4"
+		},
+		{
+			"action": {
+				"appendText": "     ",
+				"indent": "none",
+			},
+			"afterText": "^(?![ \t]*#)",
+			"beforeText": "([ \t]+|^)[|>][+-]?5"
+		},
+		{
+			"action": {
+				"appendText": "      ",
+				"indent": "none",
+			},
+			"afterText": "^(?![ \t]*#)",
+			"beforeText": "([ \t]+|^)[|>][+-]?6"
+		},
+		{
+			"action": {
+				"appendText": "       ",
+				"indent": "none",
+			},
+			"afterText": "^(?![ \t]*#)",
+			"beforeText": "([ \t]+|^)[|>][+-]?7"
+		},
+		{
+			"action": {
+				"appendText": "        ",
+				"indent": "none",
+			},
+			"afterText": "^(?![ \t]*#)",
+			"beforeText": "([ \t]+|^)[|>][+-]?8"
+		},
+		{
+			// indent 9 spaces after block-scalar with indentation-indicator
+			"action": {
+				"appendText": "         ",
+				"indent": "none",
+			},
+			"afterText": "^(?![ \t]*#)",
+			"beforeText": "([ \t]+|^)[|>][+-]?9"
+		},
+		{
+			// - block-map: # with an empty value OR block-scalar. Prefixed with a block-seq
+			"action": {
+				"appendText": "    ",
+				"indent": "none"
+			},
+			"beforeText": "(^| |\t)-[ \t]+[^#,\\[\\]{}].*:(([ \t]+[|>][+-]?)?([ \t]+#.*)?|[ \t]*)$"
+		},
+		{
+			// indent 2 spaces after non-root block-scalar
+			"action": {
+				"appendText": "  ",
+				"indent": "none",
+			},
+			"afterText": "^(?![ \t]*#)",
+			"beforeText": "[-?:][ \t]+[|>][+-]?[ \t]*(#.*)?$"
+		},
+		{
+			// block-map: cursor_must_be_before_value
+			"action": {
+				"appendText": "  ",
+				"indent": "none"
+			},
+			"beforeText": "(?<!( |\t|^)(#|\\?[ \t]).*):([ \t]*|[ \t]+#.*)$"
+		},
+		{
+			// - #empty block-seq
+			"action": {
+				"appendText": "  ",
+				"indent": "none"
+			},
+			"beforeText": "(^| |\t)-([ \t]*|[ \t]+#.*)$"
+		},
+		{
+			// - block-seq
+			"action": {
+				"appendText": "- ",
+				"indent": "none"
+			},
+			"beforeText": "(^| |\t)-[ \t].*$"
+		}
+	]
 }
